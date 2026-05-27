@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox spacing="0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.syspilot.viewer.controller.StepListPanelController"
+      styleClass="left-panel">
+
+    <!-- Filter bar -->
+    <HBox styleClass="filter-bar" spacing="6" alignment="CENTER_LEFT">
+        <padding><Insets top="6" right="8" bottom="6" left="8" /></padding>
+        <TextField fx:id="filterField" promptText="Filter steps..." styleClass="filter-field"
+                   HBox.hgrow="ALWAYS" />
+        <ComboBox fx:id="typeFilter" styleClass="type-filter" prefWidth="90" />
+    </HBox>
+
+    <!-- Agent hierarchy tree -->
+    <TreeView fx:id="agentTreeView" VBox.vgrow="ALWAYS" styleClass="agent-tree"
+              showRoot="true" />
+
+    <!-- Empty state -->
+    <Text fx:id="emptyText" text="No steps loaded.&#10;Open a trajectory.json file."
+          styleClass="empty-text" visible="false" VBox.vgrow="ALWAYS" />
+</VBox>

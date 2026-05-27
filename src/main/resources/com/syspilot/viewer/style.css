@@ -1,0 +1,334 @@
+/* ============================================================
+   SysPilot Trajectory Viewer — Dark Mode Theme
+   ============================================================ */
+
+.root {
+    -fx-font-family: "Segoe UI", "Microsoft YaHei", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-background-color: #1a1b2e;
+}
+
+/* ===== Menu Bar ===== */
+.menu-bar {
+    -fx-background-color: #0f0f1a;
+    -fx-padding: 0;
+}
+.menu-bar .label {
+    -fx-text-fill: #a0a0b8;
+    -fx-font-size: 12px;
+}
+.menu-bar .label:hover {
+    -fx-text-fill: #e0e0f0;
+}
+.menu-item {
+    -fx-background-color: #1a1b2e;
+}
+.menu-item .label {
+    -fx-text-fill: #c0c0d0;
+}
+
+/* ===== Global Stats Bar ===== */
+.stats-bar {
+    -fx-background-color: #151628;
+    -fx-border-color: #252640;
+    -fx-border-width: 0 0 1 0;
+}
+.stats-label {
+    -fx-font-size: 11px;
+    -fx-fill: #6a6a85;
+    -fx-font-weight: bold;
+}
+.stats-value {
+    -fx-font-size: 12px;
+    -fx-fill: #c8c8dc;
+}
+.stats-value-accent {
+    -fx-font-size: 12px;
+    -fx-fill: #5dade2;
+    -fx-font-weight: bold;
+}
+.tool-btn {
+    -fx-background-color: #252640;
+    -fx-text-fill: #8888a0;
+    -fx-font-size: 11px;
+    -fx-padding: 3 10;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
+}
+.tool-btn:hover {
+    -fx-background-color: #353560;
+    -fx-text-fill: #c0c0e0;
+}
+
+/* ===== Left Panel ===== */
+.left-panel {
+    -fx-background-color: #12121f;
+    -fx-border-color: #252640;
+    -fx-border-width: 0 1 0 0;
+}
+
+/* Filter Bar */
+.filter-bar {
+    -fx-background-color: #0f0f1a;
+    -fx-border-color: #252640;
+    -fx-border-width: 0 0 1 0;
+}
+.filter-field {
+    -fx-background-color: #1a1b2e;
+    -fx-text-fill: #c8c8dc;
+    -fx-prompt-text-fill: #555570;
+    -fx-border-color: #303050;
+    -fx-border-radius: 3;
+    -fx-padding: 5 8;
+    -fx-font-size: 12px;
+}
+.filter-field:focused {
+    -fx-border-color: #4a6fa5;
+}
+.type-filter {
+    -fx-background-color: #1a1b2e;
+    -fx-font-size: 11px;
+}
+.type-filter .list-cell {
+    -fx-text-fill: #c8c8dc;
+    -fx-background-color: #1a1b2e;
+}
+.type-filter .combo-box-popup .list-view {
+    -fx-background-color: #1a1b2e;
+}
+.type-filter .combo-box-popup .list-cell:hover {
+    -fx-background-color: #353560;
+}
+
+/* Agent Tree */
+.agent-tree {
+    -fx-background-color: #12121f;
+    -fx-padding: 0;
+    -fx-border-color: transparent;
+}
+.agent-tree .tree-cell {
+    -fx-background-color: #12121f;
+    -fx-padding: 0;
+    -fx-indent: 14;
+}
+.agent-tree .tree-cell:selected {
+    -fx-background-color: #1e2a42;
+}
+.agent-tree .tree-cell:hover {
+    -fx-background-color: #181830;
+}
+.agent-tree .tree-cell:selected:hover {
+    -fx-background-color: #1e2a42;
+}
+.agent-tree .tree-disclosure-node {
+    -fx-padding: 0 2 0 0;
+}
+.agent-tree .arrow {
+    -fx-background-color: #555570;
+    -fx-padding: 3 3 3 3;
+}
+/* ===== Detail Panel ===== */
+.detail-panel {
+    -fx-background-color: #1a1b2e;
+}
+
+/* Step Header */
+.step-header {
+    -fx-background-color: #151628;
+    -fx-border-color: #252640;
+    -fx-border-width: 0 0 1 0;
+}
+.step-number {
+    -fx-font-size: 15px;
+    -fx-fill: #e0e0f0;
+    -fx-font-weight: bold;
+}
+.role-badge {
+    -fx-font-size: 10px;
+    -fx-padding: 2 8;
+    -fx-font-weight: bold;
+    -fx-background-radius: 3;
+    -fx-text-fill: white;
+}
+.role-badge-agent {
+    -fx-background-color: #27ae60;
+}
+.role-badge-subagent {
+    -fx-background-color: #8e44ad;
+}
+.role-badge-user {
+    -fx-background-color: #2980b9;
+}
+.step-time {
+    -fx-font-size: 11px;
+    -fx-fill: #6a6a85;
+}
+.step-duration {
+    -fx-font-size: 12px;
+    -fx-fill: #e0b040;
+    -fx-font-weight: bold;
+}
+
+/* Detail Stats Row */
+.detail-stats-row {
+    -fx-background-color: #11121e;
+}
+.detail-stats-label {
+    -fx-font-size: 11px;
+    -fx-fill: #6a6a85;
+}
+.detail-stats-value {
+    -fx-font-size: 12px;
+    -fx-fill: #c8c8dc;
+    -fx-font-weight: bold;
+}
+.detail-stats-value-in {
+    -fx-font-size: 12px;
+    -fx-fill: #5dade2;
+    -fx-font-weight: bold;
+}
+.detail-stats-value-out {
+    -fx-font-size: 12px;
+    -fx-fill: #58d68d;
+    -fx-font-weight: bold;
+}
+
+/* Content Area */
+.content-scroll {
+    -fx-background-color: #1a1b2e;
+    -fx-background: #1a1b2e;
+}
+.content-scroll > .viewport {
+    -fx-background-color: #1a1b2e;
+}
+.content-area {
+    -fx-background-color: #1a1b2e;
+}
+.section-title {
+    -fx-font-size: 12px;
+    -fx-fill: #7a7a95;
+    -fx-font-weight: bold;
+}
+.content-textarea {
+    -fx-background-color: #11121e;
+    -fx-text-fill: #c8c8dc;
+    -fx-border-color: #252640;
+    -fx-border-radius: 4;
+    -fx-font-size: 12px;
+    -fx-font-family: "Consolas", "Microsoft YaHei", monospace;
+}
+.content-textarea .content {
+    -fx-background-color: #11121e;
+}
+
+/* Result Box */
+.result-box {
+    -fx-background-color: #0d2818;
+    -fx-border-color: #27ae60;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+.result-title {
+    -fx-font-size: 13px;
+    -fx-fill: #4cdf80;
+    -fx-font-weight: bold;
+}
+.result-content {
+    -fx-font-size: 12px;
+    -fx-fill: #a0d8b0;
+}
+
+/* Tool Calls List */
+.tool-list {
+    -fx-background-color: #11121e;
+    -fx-border-color: #252640;
+    -fx-border-radius: 4;
+}
+.tool-list .list-cell {
+    -fx-background-color: #11121e;
+    -fx-text-fill: #b8b8cc;
+    -fx-padding: 5 10;
+    -fx-border-color: #1a1a35;
+    -fx-border-width: 0 0 1 0;
+    -fx-font-family: "Consolas", "Microsoft YaHei", monospace;
+    -fx-font-size: 12px;
+}
+.tool-list .list-cell:selected {
+    -fx-background-color: #1e2a42;
+}
+
+/* ===== Status Bar ===== */
+.status-bar {
+    -fx-background-color: #0f0f1a;
+    -fx-border-color: #252640;
+    -fx-border-width: 1 0 0 0;
+}
+.status-text {
+    -fx-font-size: 11px;
+    -fx-fill: #5a5a78;
+}
+
+/* ===== Empty States ===== */
+.empty-text {
+    -fx-font-size: 13px;
+    -fx-fill: #4a4a65;
+    -fx-text-alignment: center;
+}
+.detail-empty-text {
+    -fx-font-size: 14px;
+    -fx-fill: #4a4a65;
+}
+
+/* ===== SplitPane ===== */
+.split-pane {
+    -fx-background-color: #1a1b2e;
+    -fx-box-border: transparent;
+}
+.split-pane-divider {
+    -fx-background-color: #252640;
+    -fx-padding: 0 1;
+}
+
+/* ===== ScrollBar ===== */
+.scroll-bar {
+    -fx-background-color: #12121f;
+}
+.scroll-bar .thumb {
+    -fx-background-color: #353550;
+    -fx-background-radius: 4;
+}
+.scroll-bar .thumb:hover {
+    -fx-background-color: #4a4a65;
+}
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: #555570;
+}
+
+/* ===== Separator ===== */
+.separator .line {
+    -fx-border-color: #252640;
+}
+
+/* ===== ComboBox ===== */
+.combo-box {
+    -fx-background-color: #1a1b2e;
+    -fx-border-color: #303050;
+}
+.combo-box .list-cell {
+    -fx-text-fill: #c8c8dc;
+}
+.combo-box .arrow-button {
+    -fx-background-color: #252540;
+}
+
+/* ===== TextArea (general) ===== */
+.text-area {
+    -fx-text-fill: #c8c8dc;
+    -fx-background-color: #11121e;
+}

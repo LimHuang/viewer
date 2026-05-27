@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<VBox spacing="0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.syspilot.viewer.controller.StepDetailPanelController"
+      styleClass="detail-panel">
+
+    <padding><Insets top="0" right="0" bottom="0" left="0" /></padding>
+
+    <!-- Step Header -->
+    <HBox fx:id="stepHeader" styleClass="step-header" spacing="12" alignment="CENTER_LEFT"
+          visible="false" managed="false">
+        <padding><Insets top="10" right="16" bottom="10" left="16" /></padding>
+        <Text fx:id="stepTitle" styleClass="step-number" />
+        <Label fx:id="roleBadge" styleClass="role-badge" />
+        <Text fx:id="stepTimeText" styleClass="step-time" />
+        <Pane HBox.hgrow="ALWAYS" />
+        <Text fx:id="stepDurationText" styleClass="step-duration" />
+    </HBox>
+
+    <!-- Stats Row -->
+    <HBox fx:id="statsRow" styleClass="detail-stats-row" spacing="16" alignment="CENTER_LEFT"
+          visible="false" managed="false">
+        <padding><Insets top="6" right="16" bottom="6" left="16" /></padding>
+        <HBox spacing="4" alignment="CENTER_LEFT">
+            <Text styleClass="detail-stats-label" text="Tokens in:" />
+            <Text fx:id="tokensInDetail" styleClass="detail-stats-value-in" />
+        </HBox>
+        <Separator orientation="VERTICAL" />
+        <HBox spacing="4" alignment="CENTER_LEFT">
+            <Text styleClass="detail-stats-label" text="out:" />
+            <Text fx:id="tokensOutDetail" styleClass="detail-stats-value-out" />
+        </HBox>
+        <Separator orientation="VERTICAL" />
+        <HBox spacing="4" alignment="CENTER_LEFT">
+            <Text styleClass="detail-stats-label" text="LLM time:" />
+            <Text fx:id="llmTimeText" styleClass="detail-stats-value" />
+        </HBox>
+        <Separator orientation="VERTICAL" />
+        <HBox spacing="4" alignment="CENTER_LEFT">
+            <Text styleClass="detail-stats-label" text="Step time:" />
+            <Text fx:id="stepTimeDetail" styleClass="detail-stats-value" />
+        </HBox>
+    </HBox>
+
+    <Separator fx:id="headerSeparator" visible="false" managed="false" />
+
+    <!-- Content Area -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="content-scroll">
+        <VBox spacing="12" styleClass="content-area">
+            <padding><Insets top="12" right="16" bottom="12" left="16" /></padding>
+
+            <!-- Reasoning section -->
+            <VBox fx:id="reasoningSection" spacing="4" visible="false" managed="false">
+                <Text styleClass="section-title" text="Reasoning" />
+                <TextArea fx:id="reasoningArea" editable="false" wrapText="true"
+                          styleClass="content-textarea" prefRowCount="4" />
+            </VBox>
+
+            <!-- Message / Summary section -->
+            <VBox fx:id="messageSection" spacing="4" visible="false" managed="false">
+                <Text styleClass="section-title" text="Message" />
+                <TextArea fx:id="messageArea" editable="false" wrapText="true"
+                          styleClass="content-textarea" VBox.vgrow="ALWAYS" />
+            </VBox>
+
+            <!-- Final Result -->
+            <VBox fx:id="resultSection" spacing="0" visible="false" managed="false"
+                  styleClass="result-box">
+                <padding><Insets top="10" right="14" bottom="10" left="14" /></padding>
+                <Text styleClass="result-title" text="Final Result" />
+                <Text fx:id="resultText" styleClass="result-content" />
+            </VBox>
+
+            <!-- Tool Calls -->
+            <VBox fx:id="toolSection" spacing="4" visible="false" managed="false">
+                <Text styleClass="section-title" text="Tool Calls" />
+                <ListView fx:id="toolListView" styleClass="tool-list" prefHeight="200" />
+            </VBox>
+        </VBox>
+    </ScrollPane>
+
+    <!-- Empty state -->
+    <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS">
+        <Text text="Select a step from the left panel to view details"
+              styleClass="detail-empty-text" />
+    </VBox>
+</VBox>

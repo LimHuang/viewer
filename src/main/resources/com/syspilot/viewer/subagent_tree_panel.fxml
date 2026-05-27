@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox spacing="8" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.syspilot.viewer.controller.SubAgentTreePanelController"
+      styleClass="panel-root">
+
+    <padding><Insets top="8" right="8" bottom="8" left="8" /></padding>
+
+    <Text text="Sub-Agent Hierarchy" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+
+    <TreeView fx:id="agentTreeView" VBox.vgrow="ALWAYS" showRoot="true" />
+
+    <Text fx:id="emptyText" text="No sub-agents found in the loaded trajectory."
+          styleClass="empty-hint" />
+</VBox>

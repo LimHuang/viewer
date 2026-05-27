@@ -1,0 +1,152 @@
+package com.syspilot.viewer.controller;
+
+import com.syspilot.viewer.architecture.AppArchitecture;
+import com.syspilot.viewer.architecture.BaseController;
+import com.syspilot.viewer.command.LoadTrajectoryCommand;
+import com.syspilot.viewer.event.TrajectoryLoadedEvent;
+import com.syspilot.viewer.model.StepData;
+import com.syspilot.viewer.model.SummaryData;
+import com.syspilot.viewer.model.TrajectoryData;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.io.IOException;
+
+public class MainWindowController extends BaseController {
+
+    @FXML private HBox statsBar;
+    @FXML private Text modelText;
+    @FXML private Text stepsText;
+    @FXML private Text timeText;
+    @FXML private Text tokensInText;
+    @FXML private Text tokensOutText;
+    @FXML private Text statusText;
+    @FXML private StackPane contentStack;
+    @FXML private Node mainSplit;
+
+    private Node chartView;
+    private Node subAgentView;
+    private TrajectoryData currentTrajectory;
+
+    @FXML
+    public void initialize() {
+        setArchitecture(AppArchitecture.getInstance());
+        registerEvent(TrajectoryLoadedEvent.class, this::onTrajectoryLoaded);
+    }
+
+    @FXML
+    private void onOpenFile() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open trajectory.json");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+        File file = chooser.showOpenDialog(contentStack.getScene().getWindow());
+        if (file != null) {
+            try {
+                statusText.setText("Loading: " + file.getName() + "...");
+                sendCommand(new LoadTrajectoryCommand(file));
+                statusText.setText("Loaded: " + file.getName());
+            } catch (Exception e) {
+                new Alert(Alert.AlertType.ERROR, "Failed to load: " + e.getMessage()).show();
+                statusText.setText("Error: " + e.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    private void onExit() {
+        Platform.exit();
+    }
+
+    @FXML
+    private void onShowCharts() {
+        if (currentTrajectory == null) return;
+        if (chartView == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/syspilot/viewer/stats_chart_panel.fxml"));
+                chartView = loader.load();
+            } catch (IOException e) {
+                statusText.setText("Failed to load charts: " + e.getMessage());
+                return;
+            }
+        }
+        contentStack.getChildren().setAll(chartView);
+    }
+
+    @FXML
+    private void onShowSubAgents() {
+        if (currentTrajectory == null) return;
+        if (subAgentView == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/syspilot/viewer/subagent_tree_panel.fxml"));
+                subAgentView = loader.load();
+            } catch (IOException e) {
+                statusText.setText("Failed to load sub-agents: " + e.getMessage());
+                return;
+            }
+        }
+        contentStack.getChildren().setAll(subAgentView);
+    }
+
+    private void onTrajectoryLoaded(TrajectoryLoadedEvent event) {
+        currentTrajectory = event.getTrajectory();
+        TrajectoryData t = currentTrajectory;
+        SummaryData s = t.getSummary();
+
+        // Model name
+        String model = findModelName(t);
+        modelText.setText(model);
+
+        // Steps
+        int total = s != null ? s.getTotalSteps() : (t.getSteps() != null ? t.getSteps().size() : 0);
+        int subCount = s != null ? s.getSubagentCount() : 0;
+        stepsText.setText(total + (subCount > 0 ? " (+" + subCount + " subagent)" : ""));
+
+        // Time
+        double secs = t.getExecutionTimeSeconds();
+        if (secs >= 60) {
+            long min = (long) secs / 60;
+            long sec = (long) secs % 60;
+            timeText.setText(String.format("%dm %ds", min, sec));
+        } else {
+            timeText.setText(String.format("%.1fs", secs));
+        }
+
+        // Tokens
+        int in = s != null ? s.getTotalTokensIn() : 0;
+        int out = s != null ? s.getTotalTokensOut() : 0;
+        tokensInText.setText(formatLargeNum(in));
+        tokensOutText.setText(formatLargeNum(out));
+
+        statsBar.setVisible(true);
+        statsBar.setManaged(true);
+
+        // Back to main view
+        contentStack.getChildren().setAll(mainSplit);
+    }
+
+    private String findModelName(TrajectoryData t) {
+        if (t.getSteps() != null) {
+            for (StepData step : t.getSteps()) {
+                if (step.getModelInfo() != null && step.getModelInfo().getModelName() != null) {
+                    return step.getModelInfo().getModelName();
+                }
+            }
+        }
+        return "unknown";
+    }
+
+    private static String formatLargeNum(int n) {
+        if (n >= 1000000) return String.format("%.1fM", n / 1000000.0);
+        if (n >= 1000) return String.format("%,d", n);
+        return String.valueOf(n);
+    }
+}

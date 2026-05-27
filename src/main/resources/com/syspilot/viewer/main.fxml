@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.syspilot.viewer.controller.MainWindowController"
+            styleClass="root">
+
+    <top>
+        <VBox>
+            <!-- Menu Bar -->
+            <MenuBar styleClass="menu-bar">
+                <Menu text="File">
+                    <MenuItem text="Open trajectory.json..." onAction="#onOpenFile" />
+                    <SeparatorMenuItem />
+                    <MenuItem text="Exit" onAction="#onExit" />
+                </Menu>
+            </MenuBar>
+
+            <!-- Global Stats Bar -->
+            <HBox fx:id="statsBar" styleClass="stats-bar" spacing="16" alignment="CENTER_LEFT"
+                  visible="false" managed="false">
+                <padding><Insets top="8" right="16" bottom="8" left="16" /></padding>
+
+                <HBox spacing="4" alignment="CENTER_LEFT">
+                    <Text styleClass="stats-label" text="Model:" />
+                    <Text fx:id="modelText" styleClass="stats-value" />
+                </HBox>
+                <Separator orientation="VERTICAL" />
+
+                <HBox spacing="4" alignment="CENTER_LEFT">
+                    <Text styleClass="stats-label" text="Steps:" />
+                    <Text fx:id="stepsText" styleClass="stats-value" />
+                </HBox>
+                <Separator orientation="VERTICAL" />
+
+                <HBox spacing="4" alignment="CENTER_LEFT">
+                    <Text styleClass="stats-label" text="Time:" />
+                    <Text fx:id="timeText" styleClass="stats-value" />
+                </HBox>
+                <Separator orientation="VERTICAL" />
+
+                <HBox spacing="4" alignment="CENTER_LEFT">
+                    <Text styleClass="stats-label" text="Tokens in:" />
+                    <Text fx:id="tokensInText" styleClass="stats-value-accent" />
+                </HBox>
+                <Separator orientation="VERTICAL" />
+
+                <HBox spacing="4" alignment="CENTER_LEFT">
+                    <Text styleClass="stats-label" text="out:" />
+                    <Text fx:id="tokensOutText" styleClass="stats-value" />
+                </HBox>
+
+                <Pane HBox.hgrow="ALWAYS" />
+
+                <Button text="Charts" onAction="#onShowCharts" styleClass="tool-btn" />
+                <Button text="Sub-Agents" onAction="#onShowSubAgents" styleClass="tool-btn" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane fx:id="contentStack">
+            <!-- Main split view (default) -->
+            <SplitPane fx:id="mainSplit" dividerPositions="0.28">
+                <fx:include source="step_list_panel.fxml" />
+                <fx:include source="step_detail_panel.fxml" />
+            </SplitPane>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="status-bar" spacing="8" alignment="CENTER_LEFT">
+            <padding><Insets top="3" right="12" bottom="3" left="12" /></padding>
+            <Text fx:id="statusText" styleClass="status-text" text="Ready — Open a trajectory.json file" />
+        </HBox>
+    </bottom>
+</BorderPane>

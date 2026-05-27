@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox spacing="12" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.syspilot.viewer.controller.StatsChartPanelController"
+      styleClass="panel-root">
+
+    <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+
+    <LineChart fx:id="tokenLineChart" title="Token Usage per Step" prefHeight="300"
+               animated="false" legendVisible="true" VBox.vgrow="ALWAYS">
+        <xAxis><CategoryAxis fx:id="lineXAxis" label="Step" /></xAxis>
+        <yAxis><NumberAxis fx:id="lineYAxis" label="Tokens" /></yAxis>
+    </LineChart>
+
+    <Separator />
+
+    <BarChart fx:id="durationBarChart" title="Average Tool Duration (ms)" prefHeight="300"
+              animated="false" legendVisible="false">
+        <xAxis><CategoryAxis fx:id="durXAxis" /></xAxis>
+        <yAxis><NumberAxis fx:id="durYAxis" label="Duration (ms)" /></yAxis>
+    </BarChart>
+
+    <Text fx:id="emptyText" text="No statistics data. Load a trajectory file first."
+          styleClass="empty-hint" VBox.vgrow="ALWAYS" />
+</VBox>

@@ -11,9 +11,10 @@
 
     <padding><Insets top="8" right="8" bottom="8" left="8" /></padding>
 
-    <Text text="Sub-Agent Hierarchy" style="-fx-font-size: 14px; -fx-font-weight: bold;" />
+    <Text text="Sub-Agent Hierarchy" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-fill: #e0e0f0;" />
 
-    <TreeView fx:id="agentTreeView" VBox.vgrow="ALWAYS" showRoot="true" />
+    <TreeView fx:id="agentTreeView" VBox.vgrow="ALWAYS" showRoot="true"
+              styleClass="subagent-tree" />
 
     <Text fx:id="emptyText" text="No sub-agents found in the loaded trajectory."
           styleClass="empty-hint" />

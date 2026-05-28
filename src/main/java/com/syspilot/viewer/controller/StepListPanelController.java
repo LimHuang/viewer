@@ -144,7 +144,7 @@ public class StepListPanelController extends BaseController {
         }
 
         // Build filtered copy
-        TreeItem<TreeNodeData> filteredRoot = buildFilteredTree(fullTreeRoot, type, search);
+        TreeItem<TreeNodeData> filteredRoot = buildFilteredTree(fullTreeRoot, type, search, false);
         if (filteredRoot == null || hasNoStepChildren(filteredRoot)) {
             showEmpty(true);
         } else {
@@ -158,19 +158,26 @@ public class StepListPanelController extends BaseController {
      * Returns null if this subtree has no matches (so ancestor can prune it).
      */
     private TreeItem<TreeNodeData> buildFilteredTree(TreeItem<TreeNodeData> source,
-                                                      String type, String search) {
+                                                      String type, String search,
+                                                      boolean insideSubAgent) {
         TreeNodeData srcData = source.getValue();
         if (srcData == null) return null;
 
-        boolean selfMatches = matchesFilter(srcData, type, search);
-        boolean isStep = srcData.getType() == TreeNodeData.NodeType.STEP;
+        // Determine if children are inside a sub-agent
+        boolean childrenInsideSubAgent = insideSubAgent
+                || srcData.getType() == TreeNodeData.NodeType.SUBAGENT;
+
+        boolean selfMatches = matchesFilter(srcData, type, search, insideSubAgent)
+                || (childrenInsideSubAgent && srcData.getType() == TreeNodeData.NodeType.STEP
+                    && "Sub-Agent".equals(type));
 
         // Build filtered children
         TreeItem<TreeNodeData> copy = new TreeItem<>(srcData);
         boolean hasMatchingChild = false;
 
         for (TreeItem<TreeNodeData> child : source.getChildren()) {
-            TreeItem<TreeNodeData> filteredChild = buildFilteredTree(child, type, search);
+            TreeItem<TreeNodeData> filteredChild = buildFilteredTree(child, type, search,
+                    childrenInsideSubAgent);
             if (filteredChild != null) {
                 copy.getChildren().add(filteredChild);
                 hasMatchingChild = true;
@@ -190,7 +197,8 @@ public class StepListPanelController extends BaseController {
         return null;
     }
 
-    private boolean matchesFilter(TreeNodeData data, String type, String search) {
+    private boolean matchesFilter(TreeNodeData data, String type, String search,
+                                   boolean insideSubAgent) {
         if (data.getType() != TreeNodeData.NodeType.STEP) return false;
 
         StepData step = data.getStep();
@@ -200,10 +208,7 @@ public class StepListPanelController extends BaseController {
         if (!"All".equals(type)) {
             if ("User".equals(type) && !"user".equals(step.getType())) return false;
             if ("Agent".equals(type) && !"agent".equals(step.getType())) return false;
-            if ("Sub-Agent".equals(type)) {
-                // Sub-agent steps are those under a SUBAGENT node
-                return false; // handled structurally
-            }
+            if ("Sub-Agent".equals(type) && !insideSubAgent) return false;
         }
 
         // Text search

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class StepData {
     @JsonProperty("step_id")
-    private int stepId;
+    private long stepId;
 
     private String type;
     private String timestamp;
@@ -21,8 +21,8 @@ public class StepData {
     @JsonProperty("step_duration_ms")
     private Double stepDurationMs;
 
-    public int getStepId() { return stepId; }
-    public void setStepId(int stepId) { this.stepId = stepId; }
+    public long getStepId() { return stepId; }
+    public void setStepId(long stepId) { this.stepId = stepId; }
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }

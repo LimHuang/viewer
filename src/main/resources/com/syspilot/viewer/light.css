@@ -1,69 +1,36 @@
 /* ============================================================
-   SysPilot Trajectory Viewer — Dark Mode Theme
+   SysPilot Trajectory Viewer — Light Mode Theme
    ============================================================ */
 
 .root {
     -fx-font-family: "Segoe UI", "Microsoft YaHei", "Consolas", monospace;
     -fx-font-size: 13px;
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
 }
 
 /* ===== Menu Bar ===== */
 .menu-bar {
-    -fx-background-color: #0f0f1a;
+    -fx-background-color: #e8e8e8;
     -fx-padding: 0;
 }
 .menu-bar .label {
-    -fx-text-fill: #a0a0b8;
+    -fx-text-fill: #555555;
     -fx-font-size: 12px;
 }
 .menu-bar .label:hover {
-    -fx-text-fill: #e0e0f0;
+    -fx-text-fill: #111111;
 }
 .menu-item {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
 }
 .menu-item .label {
-    -fx-text-fill: #c0c0d0;
-}
-
-/* ===== Global Stats Bar ===== */
-.stats-bar {
-    -fx-background-color: #151628;
-    -fx-border-color: #252640;
-    -fx-border-width: 0 0 1 0;
-}
-.stats-label {
-    -fx-font-size: 11px;
-    -fx-fill: #6a6a85;
-    -fx-font-weight: bold;
-}
-.stats-value {
-    -fx-font-size: 12px;
-    -fx-fill: #c8c8dc;
-}
-.stats-value-accent {
-    -fx-font-size: 12px;
-    -fx-fill: #5dade2;
-    -fx-font-weight: bold;
-}
-.tool-btn {
-    -fx-background-color: #252640;
-    -fx-text-fill: #8888a0;
-    -fx-font-size: 11px;
-    -fx-padding: 3 10;
-    -fx-background-radius: 3;
-    -fx-cursor: hand;
-}
-.tool-btn:hover {
-    -fx-background-color: #353560;
-    -fx-text-fill: #c0c0e0;
+    -fx-text-fill: #333333;
 }
 
 /* ===== Tab Bar ===== */
 .tab-bar {
-    -fx-background-color: #0f0f1a;
-    -fx-border-color: #252640;
+    -fx-background-color: #e8e8e8;
+    -fx-border-color: #cccccc;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 0;
     -fx-tab-min-height: 30;
@@ -77,22 +44,22 @@
     -fx-padding: 0;
 }
 .tab-bar .tab {
-    -fx-background-color: #12121f;
+    -fx-background-color: #e0e0e0;
     -fx-padding: 2 8 2 12;
     -fx-font-size: 11px;
-    -fx-border-color: #252640;
+    -fx-border-color: #cccccc;
     -fx-border-width: 0 1 0 0;
 }
 .tab-bar .tab .tab-label {
-    -fx-text-fill: #8888a0;
+    -fx-text-fill: #666666;
 }
 .tab-bar .tab:selected {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
     -fx-border-color: #4a6fa5;
     -fx-border-width: 0 0 2 0;
 }
 .tab-bar .tab:selected .tab-label {
-    -fx-text-fill: #e0e0f0;
+    -fx-text-fill: #111111;
 }
 .tab-bar .tab .tab-close-button {
     -fx-background-color: transparent;
@@ -104,24 +71,57 @@
     -fx-background-color: #e05050;
 }
 
+/* ===== Global Stats Bar ===== */
+.stats-bar {
+    -fx-background-color: #ececec;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 0 0 1 0;
+}
+.stats-label {
+    -fx-font-size: 11px;
+    -fx-fill: #888888;
+    -fx-font-weight: bold;
+}
+.stats-value {
+    -fx-font-size: 12px;
+    -fx-fill: #333333;
+}
+.stats-value-accent {
+    -fx-font-size: 12px;
+    -fx-fill: #1a6d9f;
+    -fx-font-weight: bold;
+}
+.tool-btn {
+    -fx-background-color: #d8d8d8;
+    -fx-text-fill: #666666;
+    -fx-font-size: 11px;
+    -fx-padding: 3 10;
+    -fx-background-radius: 3;
+    -fx-cursor: hand;
+}
+.tool-btn:hover {
+    -fx-background-color: #c0c0c0;
+    -fx-text-fill: #333333;
+}
+
 /* ===== Left Panel ===== */
 .left-panel {
-    -fx-background-color: #12121f;
-    -fx-border-color: #252640;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
     -fx-border-width: 0 1 0 0;
 }
 
 /* Filter Bar */
 .filter-bar {
-    -fx-background-color: #0f0f1a;
-    -fx-border-color: #252640;
+    -fx-background-color: #ececec;
+    -fx-border-color: #cccccc;
     -fx-border-width: 0 0 1 0;
 }
 .filter-field {
-    -fx-background-color: #1a1b2e;
-    -fx-text-fill: #c8c8dc;
-    -fx-prompt-text-fill: #555570;
-    -fx-border-color: #303050;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
+    -fx-prompt-text-fill: #aaaaaa;
+    -fx-border-color: #cccccc;
     -fx-border-radius: 3;
     -fx-padding: 5 8;
     -fx-font-size: 12px;
@@ -130,97 +130,82 @@
     -fx-border-color: #4a6fa5;
 }
 .type-filter {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #ffffff;
     -fx-font-size: 11px;
 }
 .type-filter .list-cell {
-    -fx-text-fill: #c8c8dc;
-    -fx-background-color: #1a1b2e;
+    -fx-text-fill: #333333;
+    -fx-background-color: #ffffff;
 }
 .type-filter .combo-box-popup .list-view {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #ffffff;
 }
 .type-filter .combo-box-popup .list-cell:hover {
-    -fx-background-color: #353560;
+    -fx-background-color: #d0d0e0;
 }
 
 /* Agent Tree */
 .agent-tree {
-    -fx-background-color: #12121f;
+    -fx-background-color: #ffffff;
     -fx-padding: 0;
     -fx-border-color: transparent;
 }
 .agent-tree .tree-cell {
-    -fx-background-color: #12121f;
+    -fx-background-color: #ffffff;
     -fx-padding: 4 0;
     -fx-indent: 14;
     -fx-alignment: center-left;
 }
 .agent-tree .tree-cell:selected {
-    -fx-background-color: #1e2a42;
+    -fx-background-color: #d0ddf0;
 }
 .agent-tree .tree-cell:hover {
-    -fx-background-color: #181830;
+    -fx-background-color: #e8e8f0;
 }
 .agent-tree .tree-cell:selected:hover {
-    -fx-background-color: #1e2a42;
+    -fx-background-color: #d0ddf0;
 }
 .agent-tree .tree-disclosure-node {
     -fx-padding: 0 2 0 0;
 }
 .agent-tree .arrow {
-    -fx-background-color: #555570;
+    -fx-background-color: #888888;
     -fx-padding: 3 3 3 3;
 }
+
 /* ===== SubAgent Tree ===== */
 .subagent-tree {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
     -fx-padding: 0;
     -fx-border-color: transparent;
 }
 .subagent-tree .tree-cell {
-    -fx-background-color: #1a1b2e;
-    -fx-text-fill: #c8c8dc;
-    -fx-padding: 3 6;
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #333333;
+    -fx-padding: 2 4;
     -fx-font-size: 12px;
 }
 .subagent-tree .tree-cell:selected {
-    -fx-background-color: #1e2a42;
+    -fx-background-color: #d0ddf0;
 }
 .subagent-tree .tree-cell:hover {
-    -fx-background-color: #181830;
-}
-.subagent-tree .tree-disclosure-node {
-    -fx-padding: 0 2 0 0;
-}
-.subagent-tree .arrow {
-    -fx-background-color: #555570;
-    -fx-padding: 3 3 3 3;
-}
-
-/* ===== SubAgent Panel ===== */
-.panel-root {
-    -fx-background-color: #1a1b2e;
-}
-.empty-hint {
-    -fx-font-size: 13px;
-    -fx-fill: #4a4a65;
+    -fx-background-color: #e0e0e8;
 }
 
 /* ===== Detail Panel ===== */
 .detail-panel {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
 }
 
 /* Step Header */
 .step-header {
-    -fx-background-color: #151628;
-    -fx-border-color: #252640;
+    -fx-background-color: #ececec;
+    -fx-border-color: #cccccc;
     -fx-border-width: 0 0 1 0;
 }
 .step-number {
     -fx-font-size: 15px;
-    -fx-fill: #e0e0f0;
+    -fx-fill: #222222;
     -fx-font-weight: bold;
 }
 .role-badge {
@@ -241,69 +226,69 @@
 }
 .step-time {
     -fx-font-size: 11px;
-    -fx-fill: #6a6a85;
+    -fx-fill: #888888;
 }
 .step-duration {
     -fx-font-size: 12px;
-    -fx-fill: #e0b040;
+    -fx-fill: #b8860b;
     -fx-font-weight: bold;
 }
 
 /* Detail Stats Row */
 .detail-stats-row {
-    -fx-background-color: #11121e;
+    -fx-background-color: #e8e8e8;
 }
 .detail-stats-label {
     -fx-font-size: 11px;
-    -fx-fill: #6a6a85;
+    -fx-fill: #888888;
 }
 .detail-stats-value {
     -fx-font-size: 12px;
-    -fx-fill: #c8c8dc;
+    -fx-fill: #333333;
     -fx-font-weight: bold;
 }
 .detail-stats-value-in {
     -fx-font-size: 12px;
-    -fx-fill: #5dade2;
+    -fx-fill: #1a6d9f;
     -fx-font-weight: bold;
 }
 .detail-stats-value-out {
     -fx-font-size: 12px;
-    -fx-fill: #58d68d;
+    -fx-fill: #1a7a3a;
     -fx-font-weight: bold;
 }
 
 /* Content Area */
 .content-scroll {
-    -fx-background-color: #1a1b2e;
-    -fx-background: #1a1b2e;
+    -fx-background-color: #f5f5f5;
+    -fx-background: #f5f5f5;
 }
 .content-scroll > .viewport {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
 }
 .content-area {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
 }
 .section-title {
     -fx-font-size: 12px;
-    -fx-fill: #7a7a95;
+    -fx-fill: #666666;
     -fx-font-weight: bold;
 }
 .content-textarea {
-    -fx-background-color: #11121e;
-    -fx-text-fill: #c8c8dc;
-    -fx-border-color: #252640;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
+    -fx-border-color: #cccccc;
     -fx-border-radius: 4;
     -fx-font-size: 12px;
     -fx-font-family: "Consolas", "Microsoft YaHei", monospace;
 }
 .content-textarea .content {
-    -fx-background-color: #11121e;
+    -fx-background-color: #ffffff;
 }
 
 /* Result Box */
 .result-box {
-    -fx-background-color: #0d2818;
+    -fx-background-color: #e6f4ea;
     -fx-border-color: #27ae60;
     -fx-border-width: 1.5;
     -fx-border-radius: 6;
@@ -311,75 +296,75 @@
 }
 .result-title {
     -fx-font-size: 13px;
-    -fx-fill: #4cdf80;
+    -fx-fill: #1a6d20;
     -fx-font-weight: bold;
 }
 .result-content {
     -fx-font-size: 12px;
-    -fx-fill: #a0d8b0;
+    -fx-fill: #2d5a2d;
 }
 
 /* Tool Calls List */
 .tool-list {
-    -fx-background-color: #11121e;
-    -fx-border-color: #252640;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
     -fx-border-radius: 4;
 }
 .tool-list .list-cell {
-    -fx-background-color: #11121e;
-    -fx-text-fill: #b8b8cc;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #444444;
     -fx-padding: 5 10;
-    -fx-border-color: #1a1a35;
+    -fx-border-color: #e0e0e0;
     -fx-border-width: 0 0 1 0;
     -fx-font-family: "Consolas", "Microsoft YaHei", monospace;
     -fx-font-size: 12px;
 }
 .tool-list .list-cell:selected {
-    -fx-background-color: #1e2a42;
+    -fx-background-color: #d0ddf0;
 }
 
 /* ===== Status Bar ===== */
 .status-bar {
-    -fx-background-color: #0f0f1a;
-    -fx-border-color: #252640;
+    -fx-background-color: #e8e8e8;
+    -fx-border-color: #cccccc;
     -fx-border-width: 1 0 0 0;
 }
 .status-text {
     -fx-font-size: 11px;
-    -fx-fill: #5a5a78;
+    -fx-fill: #888888;
 }
 
 /* ===== Empty States ===== */
 .empty-text {
     -fx-font-size: 13px;
-    -fx-fill: #4a4a65;
+    -fx-fill: #999999;
     -fx-text-alignment: center;
 }
 .detail-empty-text {
     -fx-font-size: 14px;
-    -fx-fill: #4a4a65;
+    -fx-fill: #999999;
 }
 
 /* ===== SplitPane ===== */
 .split-pane {
-    -fx-background-color: #1a1b2e;
+    -fx-background-color: #f5f5f5;
     -fx-box-border: transparent;
 }
 .split-pane-divider {
-    -fx-background-color: #252640;
+    -fx-background-color: #cccccc;
     -fx-padding: 0 1;
 }
 
 /* ===== ScrollBar ===== */
 .scroll-bar {
-    -fx-background-color: #12121f;
+    -fx-background-color: #f0f0f0;
 }
 .scroll-bar .thumb {
-    -fx-background-color: #353550;
+    -fx-background-color: #c0c0c0;
     -fx-background-radius: 4;
 }
 .scroll-bar .thumb:hover {
-    -fx-background-color: #4a4a65;
+    -fx-background-color: #a0a0a0;
 }
 .scroll-bar .increment-button,
 .scroll-bar .decrement-button {
@@ -387,28 +372,54 @@
 }
 .scroll-bar .increment-arrow,
 .scroll-bar .decrement-arrow {
-    -fx-background-color: #555570;
+    -fx-background-color: #888888;
 }
 
 /* ===== Separator ===== */
 .separator .line {
-    -fx-border-color: #252640;
+    -fx-border-color: #cccccc;
 }
 
 /* ===== ComboBox ===== */
 .combo-box {
-    -fx-background-color: #1a1b2e;
-    -fx-border-color: #303050;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
 }
 .combo-box .list-cell {
-    -fx-text-fill: #c8c8dc;
+    -fx-text-fill: #333333;
 }
 .combo-box .arrow-button {
-    -fx-background-color: #252540;
+    -fx-background-color: #d8d8d8;
 }
 
 /* ===== TextArea (general) ===== */
 .text-area {
-    -fx-text-fill: #c8c8dc;
-    -fx-background-color: #11121e;
+    -fx-text-fill: #333333;
+    -fx-background-color: #ffffff;
+}
+
+/* ===== Chart ===== */
+.chart {
+    -fx-background-color: #f5f5f5;
+}
+.chart-title {
+    -fx-text-fill: #333333;
+}
+.axis {
+    -fx-tick-label-fill: #666666;
+}
+.axis-label {
+    -fx-text-fill: #666666;
+}
+.chart-legend {
+    -fx-background-color: #f0f0f0;
+}
+
+/* ===== SubAgent Tree Panel ===== */
+.panel-root {
+    -fx-background-color: #f5f5f5;
+}
+.empty-hint {
+    -fx-font-size: 13px;
+    -fx-fill: #999999;
 }

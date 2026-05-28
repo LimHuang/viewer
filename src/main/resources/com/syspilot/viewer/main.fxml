@@ -19,11 +19,20 @@
                     <SeparatorMenuItem />
                     <MenuItem text="Exit" onAction="#onExit" />
                 </Menu>
+                <Menu text="Theme">
+                    <RadioMenuItem text="Dark" onAction="#onThemeDark" selected="true">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="themeGroup" />
+                        </toggleGroup>
+                    </RadioMenuItem>
+                    <RadioMenuItem text="Light" onAction="#onThemeLight"
+                                   toggleGroup="$themeGroup" />
+                </Menu>
             </MenuBar>
 
             <!-- Tab Bar -->
-            <TabPane fx:id="tabPane" styleClass="tab-bar"
-                     tabClosingPolicy="ALL_TABS" tabMinWidth="80" tabMaxWidth="200" />
+            <TabPane fx:id="tabPane" styleClass="tab-pane tab-bar"
+                     tabClosingPolicy="ALL_TABS" />
 
             <!-- Global Stats Bar -->
             <HBox fx:id="statsBar" styleClass="stats-bar" spacing="16" alignment="CENTER_LEFT"

@@ -21,6 +21,10 @@
                 </Menu>
             </MenuBar>
 
+            <!-- Tab Bar -->
+            <TabPane fx:id="tabPane" styleClass="tab-bar"
+                     tabClosingPolicy="ALL_TABS" tabMinWidth="80" tabMaxWidth="200" />
+
             <!-- Global Stats Bar -->
             <HBox fx:id="statsBar" styleClass="stats-bar" spacing="16" alignment="CENTER_LEFT"
                   visible="false" managed="false">
@@ -59,6 +63,8 @@
 
                 <Button text="Charts" onAction="#onShowCharts" styleClass="tool-btn" />
                 <Button text="Sub-Agents" onAction="#onShowSubAgents" styleClass="tool-btn" />
+                <Button text="← Back" fx:id="backButton" onAction="#onBackToMain"
+                        styleClass="tool-btn" visible="false" managed="false" />
             </HBox>
         </VBox>
     </top>

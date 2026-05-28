@@ -293,7 +293,7 @@ public class StepListPanelController extends BaseController {
         private HBox buildAgentRootRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 4 6;");
+            row.setStyle("-fx-padding: 0 6;");
 
             Label badge = new Label("AGENT");
             badge.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 9px;"
@@ -313,7 +313,7 @@ public class StepListPanelController extends BaseController {
         private HBox buildSubAgentRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 3 6;");
+            row.setStyle("-fx-padding: 0 6;");
 
             Label badge = new Label("SUB");
             badge.setStyle("-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-size: 9px;"
@@ -337,7 +337,7 @@ public class StepListPanelController extends BaseController {
         private HBox buildToolCallRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 2 6 2 20;");
+            row.setStyle("-fx-padding: 0 6 0 20;");
 
             Text icon = new Text("→");
             icon.setStyle("-fx-fill: #5dade2; -fx-font-size: 11px;");
@@ -352,7 +352,7 @@ public class StepListPanelController extends BaseController {
         private HBox buildStepRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 4 6 4 10;");
+            row.setStyle("-fx-padding: 0 6 0 10;");
 
             // Step number
             Text numText = new Text("#" + (data.getStep() != null ? data.getStep().getStepId() : "?"));

@@ -21,7 +21,7 @@ public class LoadTrajectoryCommand extends BaseCommand {
         TrajectorySystem system = getSystem(TrajectorySystem.class);
         try {
             TrajectoryData data = loader.load(file);
-            system.setTrajectory(data);
+            system.addTrajectory(file.getAbsolutePath(), data);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load trajectory: " + e.getMessage(), e);
         }

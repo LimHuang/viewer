@@ -7,11 +7,12 @@ import com.syspilot.viewer.event.TrajectoryLoadedEvent;
 import com.syspilot.viewer.model.StepData;
 import com.syspilot.viewer.model.SummaryData;
 import com.syspilot.viewer.model.TrajectoryData;
+import com.syspilot.viewer.system.TrajectorySystem;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -31,6 +32,8 @@ public class MainWindowController extends BaseController {
     @FXML private Text statusText;
     @FXML private StackPane contentStack;
     @FXML private Node mainSplit;
+    @FXML private TabPane tabPane;
+    @FXML private Button backButton;
 
     private Node chartView;
     private Node subAgentView;
@@ -40,6 +43,16 @@ public class MainWindowController extends BaseController {
     public void initialize() {
         setArchitecture(AppArchitecture.getInstance());
         registerEvent(TrajectoryLoadedEvent.class, this::onTrajectoryLoaded);
+
+        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, old, tab) -> {
+            if (tab != null && tab.getUserData() != null) {
+                String key = (String) tab.getUserData();
+                TrajectorySystem system = getSystem(TrajectorySystem.class);
+                if (!key.equals(system.getActiveKey())) {
+                    system.switchTo(key);
+                }
+            }
+        });
     }
 
     @FXML
@@ -50,10 +63,41 @@ public class MainWindowController extends BaseController {
                 new FileChooser.ExtensionFilter("JSON Files", "*.json"));
         File file = chooser.showOpenDialog(contentStack.getScene().getWindow());
         if (file != null) {
+            String path = file.getAbsolutePath();
+            TrajectorySystem system = getSystem(TrajectorySystem.class);
+
+            // Check if already open — switch to existing tab
+            if (system.getOpenFiles().contains(path)) {
+                for (Tab tab : tabPane.getTabs()) {
+                    if (path.equals(tab.getUserData())) {
+                        tabPane.getSelectionModel().select(tab);
+                        break;
+                    }
+                }
+                statusText.setText("Switched to: " + file.getName());
+                return;
+            }
+
             try {
                 statusText.setText("Loading: " + file.getName() + "...");
                 sendCommand(new LoadTrajectoryCommand(file));
                 statusText.setText("Loaded: " + file.getName());
+
+                // Create tab — the LoadTrajectoryCommand fires TrajectoryLoadedEvent
+                // which calls onTrajectoryLoaded to update stats and views
+                Tab tab = new Tab(file.getName());
+                tab.setUserData(path);
+                tab.setTooltip(new Tooltip(path));
+                tab.setOnCloseRequest(e -> {
+                    system.removeTrajectory(path);
+                    if (system.isEmpty()) {
+                        showEmptyState();
+                    }
+                });
+                tabPane.setVisible(true);
+                tabPane.setManaged(true);
+                tabPane.getTabs().add(tab);
+                tabPane.getSelectionModel().select(tab);
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Failed to load: " + e.getMessage()).show();
                 statusText.setText("Error: " + e.getMessage());
@@ -79,6 +123,8 @@ public class MainWindowController extends BaseController {
             }
         }
         contentStack.getChildren().setAll(chartView);
+        backButton.setVisible(true);
+        backButton.setManaged(true);
     }
 
     @FXML
@@ -94,6 +140,25 @@ public class MainWindowController extends BaseController {
             }
         }
         contentStack.getChildren().setAll(subAgentView);
+        backButton.setVisible(true);
+        backButton.setManaged(true);
+    }
+
+    @FXML
+    private void onBackToMain() {
+        contentStack.getChildren().setAll(mainSplit);
+        backButton.setVisible(false);
+        backButton.setManaged(false);
+    }
+
+    private void showEmptyState() {
+        statsBar.setVisible(false);
+        statsBar.setManaged(false);
+        tabPane.setVisible(false);
+        tabPane.setManaged(false);
+        contentStack.getChildren().setAll(mainSplit);
+        currentTrajectory = null;
+        statusText.setText("Ready — Open a trajectory.json file");
     }
 
     private void onTrajectoryLoaded(TrajectoryLoadedEvent event) {
@@ -131,6 +196,8 @@ public class MainWindowController extends BaseController {
 
         // Back to main view
         contentStack.getChildren().setAll(mainSplit);
+        backButton.setVisible(false);
+        backButton.setManaged(false);
     }
 
     private String findModelName(TrajectoryData t) {

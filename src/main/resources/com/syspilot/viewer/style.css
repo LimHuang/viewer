@@ -60,6 +60,41 @@
     -fx-text-fill: #c0c0e0;
 }
 
+/* ===== Tab Bar ===== */
+.tab-bar {
+    -fx-background-color: #0f0f1a;
+    -fx-border-color: #252640;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0;
+    -fx-tab-min-height: 28;
+}
+.tab-bar .tab {
+    -fx-background-color: #12121f;
+    -fx-padding: 2 12;
+    -fx-font-size: 11px;
+}
+.tab-bar .tab .tab-label {
+    -fx-text-fill: #8888a0;
+}
+.tab-bar .tab:selected {
+    -fx-background-color: #1a1b2e;
+}
+.tab-bar .tab:selected .tab-label {
+    -fx-text-fill: #e0e0f0;
+}
+.tab-bar .tab .tab-close-button {
+    -fx-background-color: transparent;
+}
+.tab-bar .tab .tab-close-button:hover {
+    -fx-background-color: #353560;
+}
+.tab-bar .tab-header-area {
+    -fx-padding: 0;
+}
+.tab-bar .headers-region {
+    -fx-padding: 0;
+}
+
 /* ===== Left Panel ===== */
 .left-panel {
     -fx-background-color: #12121f;
@@ -108,7 +143,7 @@
 }
 .agent-tree .tree-cell {
     -fx-background-color: #12121f;
-    -fx-padding: 0;
+    -fx-padding: 4 0;
     -fx-indent: 14;
     -fx-alignment: center-left;
 }

@@ -11,7 +11,7 @@
 
     <padding><Insets top="8" right="8" bottom="8" left="8" /></padding>
 
-    <Text text="Sub-Agent Hierarchy" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-fill: #e0e0f0;" />
+    <Text text="Sub-Agent Hierarchy" styleClass="panel-title" />
 
     <TreeView fx:id="agentTreeView" VBox.vgrow="ALWAYS" showRoot="true"
               styleClass="subagent-tree" />

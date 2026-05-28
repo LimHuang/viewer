@@ -172,6 +172,27 @@
     -fx-background-color: #555570;
     -fx-padding: 3 3 3 3;
 }
+/* ===== Tree Cell Styles ===== */
+.tree-row { -fx-padding: 0 6; }
+.tree-row-step { -fx-padding: 0 6 0 10; }
+.tree-row-toolcall { -fx-padding: 0 6 0 20; }
+
+.tree-badge { -fx-font-size: 8px; -fx-padding: 1 5; -fx-font-weight: bold; -fx-background-radius: 2; }
+.tree-badge-agent-root { -fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 9px; -fx-padding: 1 6; -fx-font-weight: bold; -fx-background-radius: 2; }
+.tree-badge-sub { -fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-size: 9px; -fx-padding: 1 5; -fx-font-weight: bold; -fx-background-radius: 2; }
+.tree-badge-step-user { -fx-background-color: #1a3a5c; -fx-text-fill: #5dade2; }
+.tree-badge-step-agent { -fx-background-color: #1a5c2a; -fx-text-fill: #4cdf80; }
+
+.tree-text-agent-label { -fx-fill: #e0e0f0; -fx-font-weight: bold; -fx-font-size: 12px; }
+.tree-text-subagent-label { -fx-fill: #c8b8e0; -fx-font-weight: bold; -fx-font-size: 11px; }
+.tree-text-status { -fx-fill: #7a7a95; -fx-font-size: 10px; }
+.tree-text-toolcall-icon { -fx-fill: #5dade2; -fx-font-size: 11px; }
+.tree-text-toolcall-label { -fx-fill: #8888a0; -fx-font-size: 11px; -fx-font-style: italic; }
+.tree-text-step-num { -fx-fill: #5a5a78; -fx-font-size: 11px; -fx-font-weight: bold; }
+.tree-text-step-action { -fx-fill: #b0b0c8; -fx-font-size: 12px; }
+.tree-text-token { -fx-fill: #6a6a85; -fx-font-size: 10px; }
+.tree-text-duration { -fx-fill: #e0b040; -fx-font-size: 10px; }
+
 /* ===== SubAgent Tree ===== */
 .subagent-tree {
     -fx-background-color: #1a1b2e;
@@ -201,6 +222,11 @@
 /* ===== SubAgent Panel ===== */
 .panel-root {
     -fx-background-color: #1a1b2e;
+}
+.panel-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-fill: #e0e0f0;
 }
 .empty-hint {
     -fx-font-size: 13px;

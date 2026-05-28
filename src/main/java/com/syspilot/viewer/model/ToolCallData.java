@@ -1,8 +1,10 @@
 package com.syspilot.viewer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ToolCallData {
     @JsonProperty("tool_call_id")
     private String toolCallId;

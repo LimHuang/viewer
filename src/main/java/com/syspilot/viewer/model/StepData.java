@@ -1,8 +1,10 @@
 package com.syspilot.viewer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StepData {
     @JsonProperty("step_id")
     private long stepId;

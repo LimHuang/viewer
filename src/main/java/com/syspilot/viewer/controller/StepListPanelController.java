@@ -55,6 +55,10 @@ public class StepListPanelController extends BaseController {
 
     private void onTrajectoryLoaded(TrajectoryLoadedEvent event) {
         currentTrajectory = event.getTrajectory();
+        if (currentTrajectory == null) {
+            showEmpty(true);
+            return;
+        }
         fullTreeRoot = buildFullTree(currentTrajectory);
         applyFilter();
     }
@@ -298,18 +302,17 @@ public class StepListPanelController extends BaseController {
         private HBox buildAgentRootRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 0 6;");
+            row.getStyleClass().add("tree-row");
 
             Label badge = new Label("AGENT");
-            badge.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 9px;"
-                    + " -fx-padding: 1 6; -fx-font-weight: bold; -fx-background-radius: 2;");
+            badge.getStyleClass().add("tree-badge-agent-root");
 
             Text label = new Text(data.getAgentLabel());
-            label.setStyle("-fx-fill: #e0e0f0; -fx-font-weight: bold; -fx-font-size: 12px;");
+            label.getStyleClass().add("tree-text-agent-label");
 
             String status = data.getStatusText();
             Text statusText = new Text(status);
-            statusText.setStyle("-fx-fill: #7a7a95; -fx-font-size: 10px;");
+            statusText.getStyleClass().add("tree-text-status");
 
             row.getChildren().addAll(badge, label, statusText);
             return row;
@@ -318,19 +321,18 @@ public class StepListPanelController extends BaseController {
         private HBox buildSubAgentRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 0 6;");
+            row.getStyleClass().add("tree-row");
 
             Label badge = new Label("SUB");
-            badge.setStyle("-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-size: 9px;"
-                    + " -fx-padding: 1 5; -fx-font-weight: bold; -fx-background-radius: 2;");
+            badge.getStyleClass().add("tree-badge-sub");
 
             Text label = new Text(data.getAgentLabel());
-            label.setStyle("-fx-fill: #c8b8e0; -fx-font-weight: bold; -fx-font-size: 11px;");
+            label.getStyleClass().add("tree-text-subagent-label");
 
             String status = data.getStatusText();
             if (status != null && !status.isEmpty()) {
                 Text statusText = new Text(status);
-                statusText.setStyle("-fx-fill: #7a7a95; -fx-font-size: 10px;");
+                statusText.getStyleClass().add("tree-text-status");
                 row.getChildren().addAll(badge, label, statusText);
             } else {
                 row.getChildren().addAll(badge, label);
@@ -342,13 +344,13 @@ public class StepListPanelController extends BaseController {
         private HBox buildToolCallRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 0 6 0 20;");
+            row.getStyleClass().add("tree-row-toolcall");
 
             Text icon = new Text("→");
-            icon.setStyle("-fx-fill: #5dade2; -fx-font-size: 11px;");
+            icon.getStyleClass().add("tree-text-toolcall-icon");
 
             Text label = new Text(data.getActionDisplay());
-            label.setStyle("-fx-fill: #8888a0; -fx-font-size: 11px; -fx-font-style: italic;");
+            label.getStyleClass().add("tree-text-toolcall-label");
 
             row.getChildren().addAll(icon, label);
             return row;
@@ -357,28 +359,27 @@ public class StepListPanelController extends BaseController {
         private HBox buildStepRow(TreeNodeData data) {
             HBox row = new HBox(8);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 0 6 0 10;");
+            row.getStyleClass().add("tree-row-step");
 
             // Step number
             Text numText = new Text("#" + (data.getStep() != null ? data.getStep().getStepId() : "?"));
-            numText.setStyle("-fx-fill: #5a5a78; -fx-font-size: 11px; -fx-font-weight: bold;");
+            numText.getStyleClass().add("tree-text-step-num");
 
             // Role badge
             String role = data.getStep() != null ? data.getStep().getType() : "";
             Label badge = new Label();
+            badge.getStyleClass().add("tree-badge");
             if ("user".equals(role)) {
                 badge.setText("USER");
-                badge.setStyle("-fx-background-color: #1a3a5c; -fx-text-fill: #5dade2;");
+                badge.getStyleClass().add("tree-badge-step-user");
             } else {
                 badge.setText("AGENT");
-                badge.setStyle("-fx-background-color: #1a5c2a; -fx-text-fill: #4cdf80;");
+                badge.getStyleClass().add("tree-badge-step-agent");
             }
-            badge.setStyle(badge.getStyle() + " -fx-font-size: 8px; -fx-padding: 1 5;"
-                    + " -fx-font-weight: bold; -fx-background-radius: 2;");
 
             // Action / first tool name
             Text actionText = new Text(data.getActionDisplay());
-            actionText.setStyle("-fx-fill: #b0b0c8; -fx-font-size: 12px;");
+            actionText.getStyleClass().add("tree-text-step-action");
             HBox.setHgrow(actionText, Priority.ALWAYS);
 
             row.getChildren().addAll(numText, badge, actionText);
@@ -389,7 +390,7 @@ public class StepListPanelController extends BaseController {
             if (!tokenIn.isEmpty() || !tokenOut.isEmpty()) {
                 Text tiText = new Text((!tokenIn.isEmpty() ? tokenIn + " ⬆" : "")
                         + (!tokenOut.isEmpty() ? "  " + tokenOut + " ⬇" : ""));
-                tiText.setStyle("-fx-fill: #6a6a85; -fx-font-size: 10px;");
+                tiText.getStyleClass().add("tree-text-token");
                 row.getChildren().add(tiText);
             }
 
@@ -397,7 +398,7 @@ public class StepListPanelController extends BaseController {
             String dur = data.getDurationText();
             if (!dur.isEmpty()) {
                 Text durText = new Text(dur);
-                durText.setStyle("-fx-fill: #e0b040; -fx-font-size: 10px;");
+                durText.getStyleClass().add("tree-text-duration");
                 row.getChildren().add(durText);
             }
 

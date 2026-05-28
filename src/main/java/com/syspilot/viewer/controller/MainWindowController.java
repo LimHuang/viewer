@@ -18,10 +18,13 @@ import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindowController extends BaseController {
 
@@ -87,22 +90,7 @@ public class MainWindowController extends BaseController {
                 statusText.setText("Loading: " + file.getName() + "...");
                 sendCommand(new LoadTrajectoryCommand(file));
                 statusText.setText("Loaded: " + file.getName());
-
-                // Create tab — the LoadTrajectoryCommand fires TrajectoryLoadedEvent
-                // which calls onTrajectoryLoaded to update stats and views
-                Tab tab = new Tab(file.getName());
-                tab.setUserData(path);
-                tab.setTooltip(new Tooltip(path));
-                tab.setOnCloseRequest(e -> {
-                    system.removeTrajectory(path);
-                    if (system.isEmpty()) {
-                        showEmptyState();
-                    }
-                });
-                tabPane.setVisible(true);
-                tabPane.setManaged(true);
-                tabPane.getTabs().add(tab);
-                tabPane.getSelectionModel().select(tab);
+                addTabForFile(file, path, system);
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Failed to load: " + e.getMessage()).show();
                 statusText.setText("Error: " + e.getMessage());
@@ -113,6 +101,78 @@ public class MainWindowController extends BaseController {
     @FXML
     private void onExit() {
         Platform.exit();
+    }
+
+    @FXML
+    private void onOpenFolder() {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Open Folder with trajectory JSON files");
+        File dir = chooser.showDialog(contentStack.getScene().getWindow());
+        if (dir == null) return;
+
+        List<File> jsonFiles = new ArrayList<>();
+        collectJsonFiles(dir, jsonFiles);
+
+        if (jsonFiles.isEmpty()) {
+            statusText.setText("No JSON files found in: " + dir.getName());
+            return;
+        }
+
+        jsonFiles.sort(java.util.Comparator.comparing(File::getName));
+        statusText.setText("Loading " + jsonFiles.size() + " files from " + dir.getName() + "...");
+
+        int loaded = 0;
+        int skipped = 0;
+        for (File file : jsonFiles) {
+            String path = file.getAbsolutePath();
+            TrajectorySystem system = getSystem(TrajectorySystem.class);
+            if (system.getOpenFiles().contains(path)) continue;
+
+            try {
+                sendCommand(new LoadTrajectoryCommand(file));
+                addTabForFile(file, path, system);
+                loaded++;
+            } catch (Exception e) {
+                if (!e.getMessage().contains("Not a trajectory file")) {
+                    System.err.println("Failed to load: " + file.getName() + " - " + e.getMessage());
+                }
+                skipped++;
+            }
+        }
+        if (skipped > 0) {
+            statusText.setText("Loaded " + loaded + " files, skipped " + skipped + " non-trajectory files from " + dir.getName());
+        } else {
+            statusText.setText("Loaded " + loaded + " files from " + dir.getName());
+        }
+        statusText.setText("Loaded " + loaded + " files from " + dir.getName());
+    }
+
+    private void collectJsonFiles(File dir, List<File> result) {
+        File[] files = dir.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            if (file.isDirectory()) {
+                collectJsonFiles(file, result);
+            } else if (file.getName().toLowerCase().endsWith(".json")) {
+                result.add(file);
+            }
+        }
+    }
+
+    private void addTabForFile(File file, String path, TrajectorySystem system) {
+        Tab tab = new Tab(file.getName());
+        tab.setUserData(path);
+        tab.setTooltip(new Tooltip(path));
+        tab.setOnCloseRequest(e -> {
+            system.removeTrajectory(path);
+            if (system.isEmpty()) {
+                showEmptyState();
+            }
+        });
+        tabPane.setVisible(true);
+        tabPane.setManaged(true);
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(tab);
     }
 
     @FXML
@@ -195,18 +255,7 @@ public class MainWindowController extends BaseController {
             if (!file.exists()) continue;
             try {
                 sendCommand(new LoadTrajectoryCommand(file));
-                Tab tab = new Tab(file.getName());
-                tab.setUserData(path);
-                tab.setTooltip(new Tooltip(path));
-                tab.setOnCloseRequest(e -> {
-                    system.removeTrajectory(path);
-                    if (system.isEmpty()) {
-                        showEmptyState();
-                    }
-                });
-                tabPane.setVisible(true);
-                tabPane.setManaged(true);
-                tabPane.getTabs().add(tab);
+                addTabForFile(file, path, system);
             } catch (Exception e) {
                 statusText.setText("Failed to restore: " + file.getName());
             }
@@ -224,6 +273,10 @@ public class MainWindowController extends BaseController {
 
     private void onTrajectoryLoaded(TrajectoryLoadedEvent event) {
         currentTrajectory = event.getTrajectory();
+        if (currentTrajectory == null) {
+            showEmptyState();
+            return;
+        }
         TrajectoryData t = currentTrajectory;
         SummaryData s = t.getSummary();
 

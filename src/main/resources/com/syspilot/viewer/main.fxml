@@ -16,6 +16,7 @@
             <MenuBar styleClass="menu-bar">
                 <Menu text="File">
                     <MenuItem text="Open trajectory.json..." onAction="#onOpenFile" />
+                    <MenuItem text="Open Folder..." onAction="#onOpenFolder" />
                     <SeparatorMenuItem />
                     <MenuItem text="Exit" onAction="#onExit" />
                 </Menu>

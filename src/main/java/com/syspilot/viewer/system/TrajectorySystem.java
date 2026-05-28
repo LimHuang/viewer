@@ -49,6 +49,7 @@ public class TrajectorySystem extends BaseSystem {
             } else {
                 activeKey = null;
                 trajectory.set(null);
+                sendEvent(new TrajectoryLoadedEvent(null));
             }
         }
     }

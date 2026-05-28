@@ -10,7 +10,11 @@ public class TrajectoryLoader {
     private final ObjectMapper mapper = new ObjectMapper();
 
     public TrajectoryData load(File file) throws IOException {
-        return mapper.readValue(file, TrajectoryData.class);
+        TrajectoryData data = mapper.readValue(file, TrajectoryData.class);
+        if (data.getSchemaVersion() == null && data.getSteps() == null) {
+            throw new IOException("Not a trajectory file: " + file.getName());
+        }
+        return data;
     }
 
     public TrajectoryData fromString(String json) throws IOException {

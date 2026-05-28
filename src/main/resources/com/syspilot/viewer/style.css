@@ -110,6 +110,7 @@
     -fx-background-color: #12121f;
     -fx-padding: 0;
     -fx-indent: 14;
+    -fx-alignment: center-left;
 }
 .agent-tree .tree-cell:selected {
     -fx-background-color: #1e2a42;

@@ -26,6 +26,7 @@ public class StepListPanelController extends BaseController {
 
     private TrajectoryData currentTrajectory;
     private TreeItem<TreeNodeData> fullTreeRoot;
+    private boolean selectingInTree = false;
 
     @FXML
     public void initialize() {
@@ -39,6 +40,7 @@ public class StepListPanelController extends BaseController {
 
         agentTreeView.setCellFactory(lv -> new AgentTreeCell());
         agentTreeView.getSelectionModel().selectedItemProperty().addListener((obs, old, item) -> {
+            if (selectingInTree) return;
             if (item != null && item.getValue() != null && item.getValue().getStep() != null) {
                 sendCommand(new SelectStepCommand(item.getValue().getStep()));
             }
@@ -239,15 +241,19 @@ public class StepListPanelController extends BaseController {
     }
 
     private void onStepSelected(StepSelectedEvent event) {
-        // Find and select the step in the tree
-        selectStepInTree(agentTreeView.getRoot(), event.getStep().getStepId());
+        selectingInTree = true;
+        try {
+            selectStepInTree(agentTreeView.getRoot(), event.getStep());
+        } finally {
+            selectingInTree = false;
+        }
     }
 
-    private boolean selectStepInTree(TreeItem<TreeNodeData> node, int stepId) {
+    private boolean selectStepInTree(TreeItem<TreeNodeData> node, StepData targetStep) {
         if (node == null) return false;
         TreeNodeData data = node.getValue();
         if (data != null && data.getType() == TreeNodeData.NodeType.STEP
-                && data.getStep() != null && data.getStep().getStepId() == stepId) {
+                && data.getStep() == targetStep) {
             agentTreeView.getSelectionModel().select(node);
             // Expand ancestors
             TreeItem<TreeNodeData> parent = node.getParent();
@@ -259,7 +265,7 @@ public class StepListPanelController extends BaseController {
             return true;
         }
         for (TreeItem<TreeNodeData> child : node.getChildren()) {
-            if (selectStepInTree(child, stepId)) return true;
+            if (selectStepInTree(child, targetStep)) return true;
         }
         return false;
     }

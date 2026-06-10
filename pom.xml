@@ -166,6 +166,35 @@
     </build>
 
     <profiles>
+        <!-- OS-specific SysPilot app destination -->
+        <profile>
+            <id>os-windows</id>
+            <activation>
+                <os><family>windows</family></os>
+            </activation>
+            <properties>
+                <syspilot.app.dir>${user.home}/Desktop/SysPilot/trajectory_visible</syspilot.app.dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>os-linux</id>
+            <activation>
+                <os><family>unix</family><name>Linux</name></os>
+            </activation>
+            <properties>
+                <syspilot.app.dir>${user.home}/文档/SysPilot/trajectory_visible</syspilot.app.dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>os-mac</id>
+            <activation>
+                <os><family>mac</family></os>
+            </activation>
+            <properties>
+                <syspilot.app.dir>${user.home}/Documents/SysPilot/trajectory_visible</syspilot.app.dir>
+            </properties>
+        </profile>
+
         <profile>
             <id>installer</id>
             <build>
@@ -193,7 +222,7 @@
                                         <argument>--type</argument>
                                         <argument>app-image</argument>
                                         <argument>--dest</argument>
-                                        <argument>C:\Users\Limhuang\Desktop\SysPilot\trajectory_visible</argument>
+                                        <argument>${syspilot.app.dir}</argument>
                                         <argument>--app-version</argument>
                                         <argument>1.0</argument>
                                         <argument>--java-options</argument>

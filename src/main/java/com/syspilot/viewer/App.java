@@ -5,6 +5,7 @@ import com.syspilot.viewer.architecture.AppArchitecture;
 import com.syspilot.viewer.controller.MainWindowController;
 import com.syspilot.viewer.model.StateData;
 import com.syspilot.viewer.system.TrajectorySystem;
+import com.syspilot.viewer.utility.PlatformPaths;
 import com.syspilot.viewer.utility.TrajectoryLoader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class App extends Application {
 
-    private static final Path STATE_DIR = Paths.get(System.getProperty("user.home"), ".syspilot");
+    private static final Path STATE_DIR = PlatformPaths.getSysPilotDir().resolve(".state");
     private static final Path STATE_FILE = STATE_DIR.resolve("state.json");
 
     // CLI arguments (parsed before JavaFX starts)

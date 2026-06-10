@@ -5,6 +5,7 @@ import com.syspilot.viewer.architecture.BaseController;
 import com.syspilot.viewer.command.LoadTrajectoryCommand;
 import com.syspilot.viewer.event.TrajectoryLoadedEvent;
 import com.syspilot.viewer.model.*;
+import com.syspilot.viewer.utility.PlatformPaths;
 import com.syspilot.viewer.service.LogsWatcherService;
 import com.syspilot.viewer.system.TrajectorySystem;
 import javafx.application.Platform;
@@ -444,10 +445,11 @@ public class MainWindowController extends BaseController {
             }
             // Persist cleaned state
             try {
-                java.nio.file.Files.createDirectories(java.nio.file.Paths.get(System.getProperty("user.home"), ".syspilot"));
+                java.nio.file.Path stateDir = PlatformPaths.getSysPilotDir().resolve(".state");
+                java.nio.file.Files.createDirectories(stateDir);
                 new com.fasterxml.jackson.databind.ObjectMapper()
                         .writerWithDefaultPrettyPrinter()
-                        .writeValue(new File(System.getProperty("user.home"), ".syspilot/state.json"), state);
+                        .writeValue(stateDir.resolve("state.json").toFile(), state);
             } catch (IOException e) {
                 System.err.println("Failed to save cleaned state: " + e.getMessage());
             }

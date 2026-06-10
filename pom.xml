@@ -25,6 +25,11 @@
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>21.0.6</version>
+        </dependency>
 <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
@@ -109,10 +114,97 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <options>
+                                <option>-XX:+PerfDisableSharedMem</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jlink-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jlink</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.syspilot.viewer/com.syspilot.viewer.App</mainClass>
+                            <launcher>app</launcher>
+                            <jlinkZipName>app</jlinkZipName>
+                            <jlinkImageName>app</jlinkImageName>
+                            <noManPages>true</noManPages>
+                            <stripDebug>true</stripDebug>
+                            <noHeaderFiles>true</noHeaderFiles>
+                            <options>
+                                <option>-XX:+PerfDisableSharedMem</option>
+                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>patch-launcher</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Switch to javaw (no console) to suppress native stderr noise -->
+                                <replace file="${project.build.directory}/app/bin/app.bat"
+                                         token='%DIR%\java"'
+                                         value='%DIR%\javaw"' />
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>installer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${java.home}/bin/jpackage</executable>
+                                    <arguments>
+                                        <argument>--runtime-image</argument>
+                                        <argument>${project.build.directory}/app</argument>
+                                        <argument>--module</argument>
+                                        <argument>com.syspilot.viewer/com.syspilot.viewer.App</argument>
+                                        <argument>--name</argument>
+                                        <argument>SysPilotViewer</argument>
+                                        <argument>--type</argument>
+                                        <argument>app-image</argument>
+                                        <argument>--dest</argument>
+                                        <argument>C:\Users\Limhuang\Desktop\SysPilot\trajectory_visible</argument>
+                                        <argument>--app-version</argument>
+                                        <argument>1.0</argument>
+                                        <argument>--java-options</argument>
+                                        <argument>-XX:+PerfDisableSharedMem</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

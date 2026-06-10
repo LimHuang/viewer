@@ -21,19 +21,31 @@
                     <MenuItem text="Exit" onAction="#onExit" />
                 </Menu>
                 <Menu text="Theme">
-                    <RadioMenuItem text="Dark" onAction="#onThemeDark" selected="true">
+                    <RadioMenuItem text="Dark" onAction="#onThemeDark" >
                         <toggleGroup>
                             <ToggleGroup fx:id="themeGroup" />
                         </toggleGroup>
                     </RadioMenuItem>
                     <RadioMenuItem text="Light" onAction="#onThemeLight"
-                                   toggleGroup="$themeGroup" />
+                                   toggleGroup="$themeGroup" selected="true"/>
                 </Menu>
             </MenuBar>
 
             <!-- Tab Bar -->
             <TabPane fx:id="tabPane" styleClass="tab-pane tab-bar"
                      tabClosingPolicy="ALL_TABS" />
+
+            <!-- Error Bar (trajectory-level errors from summary) -->
+            <VBox fx:id="errorBar" styleClass="error-bar" spacing="4"
+                  visible="false" managed="false">
+                <padding><Insets top="8" right="16" bottom="8" left="16" /></padding>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Text styleClass="error-bar-icon" text="✗" />
+                    <Text fx:id="errorTitleText" styleClass="error-bar-title" />
+                </HBox>
+                <Text fx:id="errorDetailText" styleClass="error-bar-detail"
+                      visible="false" managed="false" />
+            </VBox>
 
             <!-- Global Stats Bar -->
             <HBox fx:id="statsBar" styleClass="stats-bar" spacing="16" alignment="CENTER_LEFT"
@@ -71,6 +83,9 @@
 
                 <Pane HBox.hgrow="ALWAYS" />
 
+                <Text fx:id="filePathText" styleClass="stats-label"
+                      HBox.hgrow="NEVER" />
+
                 <Button text="Charts" onAction="#onShowCharts" styleClass="tool-btn" />
                 <Button text="Sub-Agents" onAction="#onShowSubAgents" styleClass="tool-btn" />
                 <Button text="← Back" fx:id="backButton" onAction="#onBackToMain"
@@ -83,8 +98,18 @@
         <StackPane fx:id="contentStack">
             <!-- Main split view (default) -->
             <SplitPane fx:id="mainSplit" dividerPositions="0.28">
-                <fx:include source="step_list_panel.fxml" />
-                <fx:include source="step_detail_panel.fxml" />
+                <VBox>
+                    <VBox fx:id="sessionTreeArea" visible="false" managed="false"
+                          VBox.vgrow="ALWAYS">
+                        <HBox styleClass="tree-toolbar" alignment="CENTER_LEFT">
+                            <padding><Insets top="2" right="4" bottom="2" left="4" /></padding>
+                            <Button text="↻ Refresh" onAction="#onRefreshTree" styleClass="tool-btn" />
+                        </HBox>
+                        <TreeView fx:id="sessionTree" VBox.vgrow="ALWAYS" styleClass="agent-tree" />
+                    </VBox>
+                    <fx:include fx:id="stepList" source="step_list_panel.fxml" />
+                </VBox>
+                <fx:include fx:id="stepDetail" source="step_detail_panel.fxml" />
             </SplitPane>
         </StackPane>
     </center>

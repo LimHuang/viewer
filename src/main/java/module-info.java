@@ -1,6 +1,7 @@
 module com.syspilot.viewer {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.web;
 
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;

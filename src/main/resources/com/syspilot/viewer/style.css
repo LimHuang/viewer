@@ -27,6 +27,28 @@
     -fx-text-fill: #c0c0d0;
 }
 
+/* ===== Error Bar ===== */
+.error-bar {
+    -fx-background-color: #2a1515;
+    -fx-border-color: #a03030;
+    -fx-border-width: 0 0 1 0;
+}
+.error-bar-icon {
+    -fx-font-size: 14px;
+    -fx-fill: #e05050;
+    -fx-font-weight: bold;
+}
+.error-bar-title {
+    -fx-font-size: 12px;
+    -fx-fill: #e87070;
+    -fx-font-weight: bold;
+}
+.error-bar-detail {
+    -fx-font-size: 11px;
+    -fx-fill: #c09090;
+    -fx-font-family: "Consolas", "Microsoft YaHei", monospace;
+}
+
 /* ===== Global Stats Bar ===== */
 .stats-bar {
     -fx-background-color: #151628;
@@ -66,7 +88,7 @@
     -fx-border-color: #252640;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 0;
-    -fx-tab-min-height: 30;
+    -fx-tab-min-height: 24;
     -fx-open-tab-animation: none;
     -fx-close-tab-animation: none;
 }
@@ -78,8 +100,8 @@
 }
 .tab-bar .tab {
     -fx-background-color: #12121f;
-    -fx-padding: 2 8 2 12;
-    -fx-font-size: 11px;
+    -fx-padding: 1 6 1 8;
+    -fx-font-size: 10px;
     -fx-border-color: #252640;
     -fx-border-width: 0 1 0 0;
 }

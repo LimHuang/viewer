@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.web.WebView?>
 
 <VBox spacing="0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.syspilot.viewer.controller.StepDetailPanelController"
@@ -50,40 +51,50 @@
 
     <Separator fx:id="headerSeparator" visible="false" managed="false" />
 
-    <!-- Content Area -->
-    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="content-scroll">
-        <VBox spacing="12" styleClass="content-area">
-            <padding><Insets top="12" right="16" bottom="12" left="16" /></padding>
+    <!-- Proportional content split: message vs. tool list -->
+    <SplitPane fx:id="contentSplitPane" orientation="VERTICAL"
+               dividerPositions="0.5" VBox.vgrow="ALWAYS"
+               visible="false" managed="false">
 
-            <!-- Reasoning section -->
-            <VBox fx:id="reasoningSection" spacing="4" visible="false" managed="false">
-                <Text styleClass="section-title" text="Reasoning" />
-                <TextArea fx:id="reasoningArea" editable="false" wrapText="true"
-                          styleClass="content-textarea" prefRowCount="4" />
-            </VBox>
+        <!-- Top: message + tool detail (swapped via StackPane) -->
+        <StackPane fx:id="contentStack">
+            <WebView fx:id="contentView" />
 
-            <!-- Message / Summary section -->
-            <VBox fx:id="messageSection" spacing="4" visible="false" managed="false">
-                <Text styleClass="section-title" text="Message" />
-                <TextArea fx:id="messageArea" editable="false" wrapText="true"
-                          styleClass="content-textarea" VBox.vgrow="ALWAYS" />
-            </VBox>
+            <VBox fx:id="toolDetailPane" spacing="6" visible="false" managed="false"
+                  styleClass="detail-panel">
+                <padding><Insets top="8" right="16" bottom="8" left="16" /></padding>
 
-            <!-- Final Result -->
-            <VBox fx:id="resultSection" spacing="0" visible="false" managed="false"
-                  styleClass="result-box">
-                <padding><Insets top="10" right="14" bottom="10" left="14" /></padding>
-                <Text styleClass="result-title" text="Final Result" />
-                <Text fx:id="resultText" styleClass="result-content" />
-            </VBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Button text="← Back to message" onAction="#onToolDetailBack"
+                            styleClass="tool-btn" />
+                    <Text fx:id="toolDetailTitle" styleClass="section-title" />
+                </HBox>
 
-            <!-- Tool Calls -->
-            <VBox fx:id="toolSection" spacing="4" visible="false" managed="false">
-                <Text styleClass="section-title" text="Tool Calls" />
-                <ListView fx:id="toolListView" styleClass="tool-list" prefHeight="200" />
+                <Text styleClass="section-title" text="Arguments" />
+                <TextArea fx:id="toolArgsArea" editable="false" wrapText="false"
+                          styleClass="content-textarea" VBox.vgrow="ALWAYS"
+                          prefRowCount="6" />
+
+                <Text styleClass="section-title" text="Result" />
+                <TextArea fx:id="toolResultArea" editable="false" wrapText="true"
+                          styleClass="content-textarea" VBox.vgrow="ALWAYS"
+                          prefRowCount="6" />
+
+                <Text fx:id="toolErrorLabel" styleClass="section-title" text="Error"
+                      visible="false" managed="false" />
+                <TextArea fx:id="toolErrorArea" editable="false" wrapText="true"
+                          styleClass="content-textarea" visible="false" managed="false"
+                          prefRowCount="3" />
             </VBox>
+        </StackPane>
+
+        <!-- Bottom: tool call list -->
+        <VBox fx:id="toolContainer" spacing="4">
+            <padding><Insets top="8" right="16" bottom="8" left="16" /></padding>
+            <Text styleClass="section-title" text="Tool Calls" />
+            <ListView fx:id="toolListView" styleClass="tool-list" VBox.vgrow="ALWAYS" />
         </VBox>
-    </ScrollPane>
+    </SplitPane>
 
     <!-- Empty state -->
     <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS">

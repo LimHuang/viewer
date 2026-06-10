@@ -33,7 +33,7 @@
     -fx-border-color: #cccccc;
     -fx-border-width: 0 0 1 0;
     -fx-padding: 0;
-    -fx-tab-min-height: 30;
+    -fx-tab-min-height: 24;
     -fx-open-tab-animation: none;
     -fx-close-tab-animation: none;
 }
@@ -45,8 +45,8 @@
 }
 .tab-bar .tab {
     -fx-background-color: #e0e0e0;
-    -fx-padding: 2 8 2 12;
-    -fx-font-size: 11px;
+    -fx-padding: 1 6 1 8;
+    -fx-font-size: 10px;
     -fx-border-color: #cccccc;
     -fx-border-width: 0 1 0 0;
 }
@@ -69,6 +69,28 @@
 }
 .tab-bar .tab .tab-close-button:hover {
     -fx-background-color: #e05050;
+}
+
+/* ===== Error Bar ===== */
+.error-bar {
+    -fx-background-color: #fff0f0;
+    -fx-border-color: #e05050;
+    -fx-border-width: 0 0 1 0;
+}
+.error-bar-icon {
+    -fx-font-size: 14px;
+    -fx-fill: #e05050;
+    -fx-font-weight: bold;
+}
+.error-bar-title {
+    -fx-font-size: 12px;
+    -fx-fill: #c03030;
+    -fx-font-weight: bold;
+}
+.error-bar-detail {
+    -fx-font-size: 11px;
+    -fx-fill: #885050;
+    -fx-font-family: "Consolas", "Microsoft YaHei", monospace;
 }
 
 /* ===== Global Stats Bar ===== */

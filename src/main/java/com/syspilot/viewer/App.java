@@ -16,11 +16,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class App extends Application {
 
     private static final Path STATE_DIR = Paths.get(System.getProperty("user.home"), ".syspilot");
     private static final Path STATE_FILE = STATE_DIR.resolve("state.json");
+
+    // CLI arguments (parsed before JavaFX starts)
+    private static String cliLogsDir;
+    private static String cliSessionId;
 
     private MainWindowController controller;
 
@@ -33,7 +38,7 @@ public class App extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
         Scene scene = new Scene(loader.load(), 1400, 900);
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("light.css").toExternalForm());
         controller = loader.getController();
 
         stage.setTitle("SysPilot Trajectory Viewer");
@@ -41,6 +46,14 @@ public class App extends Application {
         stage.setMinHeight(600);
         stage.setScene(scene);
         stage.show();
+
+        // If --logs-dir was provided, start session watching mode
+        if (cliLogsDir != null && !cliLogsDir.isEmpty()) {
+            Path logsPath = Paths.get(cliLogsDir);
+            if (Files.isDirectory(logsPath)) {
+                controller.startSessionMode(logsPath, cliSessionId);
+            }
+        }
 
         // Restore previous session
         restoreState();
@@ -78,7 +91,24 @@ public class App extends Application {
         }
     }
 
+    /**
+     * Parse command-line arguments before JavaFX launches.
+     * Usage: --logs-dir <path> [--session <id>]
+     */
     public static void main(String[] args) {
-        launch(args);
+        // Parse CLI args
+        List<String> javaArgs = new java.util.ArrayList<>();
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "--logs-dir" -> {
+                    if (i + 1 < args.length) cliLogsDir = args[++i];
+                }
+                case "--session" -> {
+                    if (i + 1 < args.length) cliSessionId = args[++i];
+                }
+                default -> javaArgs.add(args[i]);
+            }
+        }
+        launch(javaArgs.toArray(new String[0]));
     }
 }

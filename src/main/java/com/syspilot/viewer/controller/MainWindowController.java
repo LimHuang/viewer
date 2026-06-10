@@ -4,10 +4,8 @@ import com.syspilot.viewer.architecture.AppArchitecture;
 import com.syspilot.viewer.architecture.BaseController;
 import com.syspilot.viewer.command.LoadTrajectoryCommand;
 import com.syspilot.viewer.event.TrajectoryLoadedEvent;
-import com.syspilot.viewer.model.StateData;
-import com.syspilot.viewer.model.StepData;
-import com.syspilot.viewer.model.SummaryData;
-import com.syspilot.viewer.model.TrajectoryData;
+import com.syspilot.viewer.model.*;
+import com.syspilot.viewer.service.LogsWatcherService;
 import com.syspilot.viewer.system.TrajectorySystem;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,12 +15,14 @@ import javafx.scene.control.*;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,22 +30,33 @@ public class MainWindowController extends BaseController {
 
     private enum ViewMode { MAIN, CHARTS, SUBAGENTS }
 
+    @FXML private VBox errorBar;
+    @FXML private Text errorTitleText;
+    @FXML private Text errorDetailText;
+
     @FXML private HBox statsBar;
     @FXML private Text modelText;
     @FXML private Text stepsText;
     @FXML private Text timeText;
     @FXML private Text tokensInText;
     @FXML private Text tokensOutText;
+    @FXML private Text filePathText;
     @FXML private Text statusText;
     @FXML private StackPane contentStack;
     @FXML private Node mainSplit;
     @FXML private TabPane tabPane;
     @FXML private Button backButton;
+    @FXML private VBox sessionTreeArea;
+    @FXML private TreeView<String> sessionTree;
+
+    @FXML private StepDetailPanelController stepDetailController;
 
     private Node chartView;
     private Node subAgentView;
     private TrajectoryData currentTrajectory;
     private ViewMode currentViewMode = ViewMode.MAIN;
+    private boolean darkMode = false;
+    private LogsWatcherService logsWatcher;
 
     @FXML
     public void initialize() {
@@ -74,7 +85,6 @@ public class MainWindowController extends BaseController {
             String path = file.getAbsolutePath();
             TrajectorySystem system = getSystem(TrajectorySystem.class);
 
-            // Check if already open — switch to existing tab
             if (system.getOpenFiles().contains(path)) {
                 for (Tab tab : tabPane.getTabs()) {
                     if (path.equals(tab.getUserData())) {
@@ -82,15 +92,15 @@ public class MainWindowController extends BaseController {
                         break;
                     }
                 }
-                statusText.setText("Switched to: " + file.getName());
+                statusText.setText("Switched to: " + path);
                 return;
             }
 
             try {
-                statusText.setText("Loading: " + file.getName() + "...");
+                statusText.setText("Loading: " + path + "...");
                 sendCommand(new LoadTrajectoryCommand(file));
-                statusText.setText("Loaded: " + file.getName());
-                addTabForFile(file, path, system);
+                statusText.setText("Loaded: " + path);
+                addTabForFile(path, system);
             } catch (Exception e) {
                 new Alert(Alert.AlertType.ERROR, "Failed to load: " + e.getMessage()).show();
                 statusText.setText("Error: " + e.getMessage());
@@ -130,21 +140,20 @@ public class MainWindowController extends BaseController {
 
             try {
                 sendCommand(new LoadTrajectoryCommand(file));
-                addTabForFile(file, path, system);
+                addTabForFile(path, system);
                 loaded++;
             } catch (Exception e) {
                 if (!e.getMessage().contains("Not a trajectory file")) {
-                    System.err.println("Failed to load: " + file.getName() + " - " + e.getMessage());
+                    System.err.println("Failed to load: " + path + " - " + e.getMessage());
                 }
                 skipped++;
             }
         }
         if (skipped > 0) {
-            statusText.setText("Loaded " + loaded + " files, skipped " + skipped + " non-trajectory files from " + dir.getName());
+            statusText.setText("Loaded " + loaded + " files, skipped " + skipped + " non-trajectory files");
         } else {
             statusText.setText("Loaded " + loaded + " files from " + dir.getName());
         }
-        statusText.setText("Loaded " + loaded + " files from " + dir.getName());
     }
 
     private void collectJsonFiles(File dir, List<File> result) {
@@ -159,8 +168,9 @@ public class MainWindowController extends BaseController {
         }
     }
 
-    private void addTabForFile(File file, String path, TrajectorySystem system) {
-        Tab tab = new Tab(file.getName());
+    private void addTabForFile(String path, TrajectorySystem system) {
+        String fileName = new File(path).getName();
+        Tab tab = new Tab(fileName);
         tab.setUserData(path);
         tab.setTooltip(new Tooltip(path));
         tab.setOnCloseRequest(e -> {
@@ -177,19 +187,27 @@ public class MainWindowController extends BaseController {
 
     @FXML
     private void onThemeDark() {
+        darkMode = true;
         Scene scene = contentStack.getScene();
         if (scene != null) {
             scene.getStylesheets().setAll(
                     getClass().getResource("/com/syspilot/viewer/style.css").toExternalForm());
         }
+        if (stepDetailController != null) {
+            stepDetailController.setDarkMode(true);
+        }
     }
 
     @FXML
     private void onThemeLight() {
+        darkMode = false;
         Scene scene = contentStack.getScene();
         if (scene != null) {
             scene.getStylesheets().setAll(
                     getClass().getResource("/com/syspilot/viewer/light.css").toExternalForm());
+        }
+        if (stepDetailController != null) {
+            stepDetailController.setDarkMode(false);
         }
     }
 
@@ -237,11 +255,164 @@ public class MainWindowController extends BaseController {
         backButton.setManaged(false);
     }
 
+    @FXML
+    private void onRefreshTree() {
+        if (logsWatcher == null) return;
+        TreeItem<String> root = sessionTree.getRoot();
+        if (root == null) return;
+        refreshSessionTree(root);
+        statusText.setText("Tree refreshed");
+    }
+
+    // ---- Session mode (--logs-dir) ----
+
+    public void startSessionMode(Path logsDir, String activeSessionId) {
+        try {
+            logsWatcher = new LogsWatcherService(logsDir);
+            logsWatcher.start();
+        } catch (IOException e) {
+            statusText.setText("Failed to watch logs directory: " + e.getMessage());
+            return;
+        }
+
+        // Build session tree
+        sessionTreeArea.setVisible(true);
+        sessionTreeArea.setManaged(true);
+        sessionTree.setShowRoot(false);
+        TreeItem<String> root = new TreeItem<>("Sessions");
+        refreshSessionTree(root);
+
+        // Listen for new turns in real-time
+        logsWatcher.newTurnProperty().addListener((obs, old, turn) -> {
+            if (turn != null) {
+                Platform.runLater(() -> {
+                    refreshSessionTree(root);
+                    // Auto-load the new turn
+                    loadTurnForPath(turn.getTrajectoryFile().toString());
+                });
+            }
+        });
+
+        sessionTree.getSelectionModel().selectedItemProperty().addListener((obs, old, item) -> {
+            if (item != null) {
+                loadTurnForItem(item);
+            }
+        });
+
+        sessionTree.setRoot(root);
+
+        // Auto-select the most recent session's latest turn
+        if (!root.getChildren().isEmpty()) {
+            TreeItem<String> targetSession = null;
+            if (activeSessionId != null) {
+                for (TreeItem<String> child : root.getChildren()) {
+                    if (child.getValue().equals(activeSessionId)) {
+                        targetSession = child;
+                        break;
+                    }
+                }
+            }
+            if (targetSession == null) {
+                targetSession = root.getChildren().get(root.getChildren().size() - 1);
+            }
+            if (!targetSession.getChildren().isEmpty()) {
+                TreeItem<String> lastTurn = targetSession.getChildren()
+                        .get(targetSession.getChildren().size() - 1);
+                sessionTree.getSelectionModel().select(lastTurn);
+                sessionTree.scrollTo(sessionTree.getRow(lastTurn));
+            }
+        }
+
+        // Auto-select the active session's latest turn (or most recent session)
+        if (activeSessionId != null) {
+            statusText.setText("Watching: " + logsDir + " (session: " + activeSessionId + ")");
+        } else {
+            statusText.setText("Watching: " + logsDir);
+        }
+    }
+
+    // Map tree items to their trajectory file paths for loading
+    private final java.util.Map<TreeItem<String>, String> treeItemPaths = new java.util.HashMap<>();
+
+    private void refreshSessionTree(TreeItem<String> root) {
+        root.getChildren().clear();
+        treeItemPaths.clear();
+        for (SessionData session : logsWatcher.getSessions()) {
+            TreeItem<String> sessionItem = new TreeItem<>(session.getName());
+            for (TurnData turn : session.getTurns()) {
+                String label = turn.getName();
+                if (turn.getPreview() != null && !turn.getPreview().isEmpty()) {
+                    label += " — " + turn.getPreview();
+                }
+                TreeItem<String> turnItem = new TreeItem<>(label);
+                treeItemPaths.put(turnItem, turn.getTrajectoryFile().toString());
+                sessionItem.getChildren().add(turnItem);
+            }
+            root.getChildren().add(sessionItem);
+            sessionItem.setExpanded(true);
+        }
+    }
+
+    private void loadTurnForPath(String path) {
+        File file = new File(path);
+        if (!file.exists()) return;
+
+        TrajectorySystem system = getSystem(TrajectorySystem.class);
+        if (system.getOpenFiles().contains(path)) {
+            for (Tab tab : tabPane.getTabs()) {
+                if (path.equals(tab.getUserData())) {
+                    tabPane.getSelectionModel().select(tab);
+                    return;
+                }
+            }
+        }
+
+        try {
+            statusText.setText("Loading new turn...");
+            sendCommand(new LoadTrajectoryCommand(file));
+            statusText.setText("Loaded new turn");
+            addTabForFile(path, system);
+        } catch (Exception e) {
+            statusText.setText("Error: " + e.getMessage());
+        }
+    }
+
+    private void loadTurnForItem(TreeItem<String> item) {
+        String path = treeItemPaths.get(item);
+        if (path == null) return;
+        File file = new File(path);
+        if (!file.exists()) return;
+
+        TrajectorySystem system = getSystem(TrajectorySystem.class);
+
+        // If already open, switch to its tab
+        if (system.getOpenFiles().contains(path)) {
+            for (Tab tab : tabPane.getTabs()) {
+                if (path.equals(tab.getUserData())) {
+                    tabPane.getSelectionModel().select(tab);
+                    return;
+                }
+            }
+        }
+
+        try {
+            statusText.setText("Loading: " + file.getParentFile().getName() + "/" + file.getName() + "...");
+            sendCommand(new LoadTrajectoryCommand(file));
+            statusText.setText("Loaded: " + item.getValue());
+            addTabForFile(path, system);
+        } catch (Exception e) {
+            statusText.setText("Error: " + e.getMessage());
+        }
+    }
+
     private void showEmptyState() {
+        errorBar.setVisible(false);
+        errorBar.setManaged(false);
         statsBar.setVisible(false);
         statsBar.setManaged(false);
         tabPane.setVisible(false);
         tabPane.setManaged(false);
+        filePathText.setText("");
         contentStack.getChildren().setAll(mainSplit);
         currentTrajectory = null;
         currentViewMode = ViewMode.MAIN;
@@ -250,18 +421,39 @@ public class MainWindowController extends BaseController {
 
     public void restoreState(StateData state) {
         TrajectorySystem system = getSystem(TrajectorySystem.class);
+        List<String> validPaths = new ArrayList<>();
         for (String path : state.getOpenFiles()) {
             File file = new File(path);
-            if (!file.exists()) continue;
+            if (!file.exists()) {
+                System.err.println("Skipping non-existent file: " + path);
+                continue;
+            }
             try {
                 sendCommand(new LoadTrajectoryCommand(file));
-                addTabForFile(file, path, system);
+                addTabForFile(path, system);
+                validPaths.add(path);
             } catch (Exception e) {
-                statusText.setText("Failed to restore: " + file.getName());
+                System.err.println("Failed to restore: " + path + " - " + e.getMessage());
+            }
+        }
+        // Clean up state by removing non-existent paths
+        if (validPaths.size() != state.getOpenFiles().size()) {
+            state.setOpenFiles(validPaths);
+            if (state.getActiveFile() != null && !validPaths.contains(state.getActiveFile())) {
+                state.setActiveFile(validPaths.isEmpty() ? null : validPaths.get(validPaths.size() - 1));
+            }
+            // Persist cleaned state
+            try {
+                java.nio.file.Files.createDirectories(java.nio.file.Paths.get(System.getProperty("user.home"), ".syspilot"));
+                new com.fasterxml.jackson.databind.ObjectMapper()
+                        .writerWithDefaultPrettyPrinter()
+                        .writeValue(new File(System.getProperty("user.home"), ".syspilot/state.json"), state);
+            } catch (IOException e) {
+                System.err.println("Failed to save cleaned state: " + e.getMessage());
             }
         }
         // Select active tab
-        if (state.getActiveFile() != null) {
+        if (state.getActiveFile() != null && validPaths.contains(state.getActiveFile())) {
             for (Tab tab : tabPane.getTabs()) {
                 if (state.getActiveFile().equals(tab.getUserData())) {
                     tabPane.getSelectionModel().select(tab);
@@ -279,6 +471,10 @@ public class MainWindowController extends BaseController {
         }
         TrajectoryData t = currentTrajectory;
         SummaryData s = t.getSummary();
+
+        // File path
+        TrajectorySystem system = getSystem(TrajectorySystem.class);
+        filePathText.setText(system.getActiveKey() != null ? system.getActiveKey() : "");
 
         // Model name
         String model = findModelName(t);
@@ -307,6 +503,31 @@ public class MainWindowController extends BaseController {
 
         statsBar.setVisible(true);
         statsBar.setManaged(true);
+
+        // Error bar — show trajectory-level and summary errors
+        List<String> allErrors = new ArrayList<>();
+        if (!t.isSuccess() && t.getError() != null && !t.getError().isEmpty()) {
+            allErrors.add(t.getError());
+        }
+        if (s != null && s.getErrors() != null) {
+            allErrors.addAll(s.getErrors());
+        }
+        if (!allErrors.isEmpty()) {
+            errorTitleText.setText("Error: " + allErrors.get(0));
+            if (allErrors.size() > 1) {
+                errorDetailText.setText(String.join("\n", allErrors));
+                errorDetailText.setVisible(true);
+                errorDetailText.setManaged(true);
+            } else {
+                errorDetailText.setVisible(false);
+                errorDetailText.setManaged(false);
+            }
+            errorBar.setVisible(true);
+            errorBar.setManaged(true);
+        } else {
+            errorBar.setVisible(false);
+            errorBar.setManaged(false);
+        }
 
         // Restore appropriate view
         switch (currentViewMode) {

@@ -259,41 +259,50 @@ public class MainWindowController extends BaseController {
     @FXML
     private void onRefreshTree() {
         if (logsWatcher == null) return;
+
+        // Remember selected path before refresh
+        TreeItem<String> selected = sessionTree.getSelectionModel().getSelectedItem();
+        String selectedPath = selected != null ? treeItemPaths.get(selected) : null;
+
         logsWatcher.refreshNow();
         TreeItem<String> root = sessionTree.getRoot();
-        if (root == null) return;
+        if (root == null) {
+            root = new TreeItem<>("Sessions");
+            sessionTree.setRoot(root);
+        }
         refreshSessionTree(root);
-        statusText.setText("Tree refreshed");
+
+        // Restore selection
+        if (selectedPath != null) {
+            restoreSelection(root, selectedPath);
+        }
+
+        statusText.setText("Tree refreshed — " + logsWatcher.getSessions().size() + " sessions");
+    }
+
+    private void restoreSelection(TreeItem<String> root, String path) {
+        for (TreeItem<String> sessionItem : root.getChildren()) {
+            for (TreeItem<String> turnItem : sessionItem.getChildren()) {
+                if (path.equals(treeItemPaths.get(turnItem))) {
+                    sessionTree.getSelectionModel().select(turnItem);
+                    sessionTree.scrollTo(sessionTree.getRow(turnItem));
+                    return;
+                }
+            }
+        }
     }
 
     // ---- Session mode (--logs-dir) ----
 
     public void startSessionMode(Path logsDir, String activeSessionId) {
-        try {
-            logsWatcher = new LogsWatcherService(logsDir);
-            logsWatcher.start();
-        } catch (IOException e) {
-            statusText.setText("Failed to watch logs directory: " + e.getMessage());
-            return;
-        }
+        logsWatcher = new LogsWatcherService(logsDir);
+        logsWatcher.refreshNow();
 
-        // Build session tree
         sessionTreeArea.setVisible(true);
         sessionTreeArea.setManaged(true);
         sessionTree.setShowRoot(false);
         TreeItem<String> root = new TreeItem<>("Sessions");
         refreshSessionTree(root);
-
-        // Listen for new turns in real-time
-        logsWatcher.newTurnProperty().addListener((obs, old, turn) -> {
-            if (turn != null) {
-                Platform.runLater(() -> {
-                    refreshSessionTree(root);
-                    // Auto-load the new turn
-                    loadTurnForPath(turn.getTrajectoryFile().toString());
-                });
-            }
-        });
 
         sessionTree.getSelectionModel().selectedItemProperty().addListener((obs, old, item) -> {
             if (item != null) {
@@ -303,7 +312,7 @@ public class MainWindowController extends BaseController {
 
         sessionTree.setRoot(root);
 
-        // Auto-select the most recent session's latest turn
+        // Auto-select the active session's latest turn, or the most recent session
         if (!root.getChildren().isEmpty()) {
             TreeItem<String> targetSession = null;
             if (activeSessionId != null) {
@@ -325,12 +334,7 @@ public class MainWindowController extends BaseController {
             }
         }
 
-        // Auto-select the active session's latest turn (or most recent session)
-        if (activeSessionId != null) {
-            statusText.setText("Watching: " + logsDir + " (session: " + activeSessionId + ")");
-        } else {
-            statusText.setText("Watching: " + logsDir);
-        }
+        statusText.setText("Session mode — " + logsDir);
     }
 
     // Map tree items to their trajectory file paths for loading

@@ -364,13 +364,11 @@ public class MainWindowController extends BaseController {
         if (!file.exists()) return;
 
         TrajectorySystem system = getSystem(TrajectorySystem.class);
+
+        // If already open, force-reload to pick up new turns appended after refresh
         if (system.getOpenFiles().contains(path)) {
-            for (Tab tab : tabPane.getTabs()) {
-                if (path.equals(tab.getUserData())) {
-                    tabPane.getSelectionModel().select(tab);
-                    return;
-                }
-            }
+            system.removeTrajectory(path);
+            removeTabForPath(path);
         }
 
         try {
@@ -391,14 +389,10 @@ public class MainWindowController extends BaseController {
 
         TrajectorySystem system = getSystem(TrajectorySystem.class);
 
-        // If already open, switch to its tab
+        // If already open, force-reload to pick up new turns appended after refresh
         if (system.getOpenFiles().contains(path)) {
-            for (Tab tab : tabPane.getTabs()) {
-                if (path.equals(tab.getUserData())) {
-                    tabPane.getSelectionModel().select(tab);
-                    return;
-                }
-            }
+            system.removeTrajectory(path);
+            removeTabForPath(path);
         }
 
         try {
@@ -408,6 +402,13 @@ public class MainWindowController extends BaseController {
             addTabForFile(path, system);
         } catch (Exception e) {
             statusText.setText("Error: " + e.getMessage());
+        }
+    }
+
+    private void removeTabForPath(String path) {
+        tabPane.getTabs().removeIf(tab -> path.equals(tab.getUserData()));
+        if (tabPane.getTabs().isEmpty()) {
+            showEmptyState();
         }
     }
 

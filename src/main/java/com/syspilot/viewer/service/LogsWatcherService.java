@@ -27,6 +27,12 @@ public class LogsWatcherService {
                 t.setDaemon(true);
                 return t;
             });
+    private final ScheduledExecutorService poller =
+            Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "logs-watcher-poller");
+                t.setDaemon(true);
+                return t;
+            });
 
     private final Map<String, SessionData> sessions = new LinkedHashMap<>();
     private final Map<String, Integer> sessionTurnCounts = new ConcurrentHashMap<>();
@@ -44,11 +50,67 @@ public class LogsWatcherService {
     public void start() {
         scanExistingSessions();
         startWatching();
+        startPolling();
     }
 
     public void stop() {
         try { watchService.close(); } catch (IOException ignored) {}
         debouncer.shutdownNow();
+        poller.shutdownNow();
+    }
+
+    /** Force an immediate rescan of all sessions. */
+    public void refreshNow() {
+        pollCycle();
+    }
+
+    // ---- Polling fallback (for WSL / network drives where inotify is unreliable) ----
+
+    private void startPolling() {
+        poller.scheduleWithFixedDelay(() -> {
+            try {
+                pollCycle();
+            } catch (Exception e) {
+                System.err.println("Logs poller error: " + e.getMessage());
+            }
+        }, 3, 3, TimeUnit.SECONDS);
+    }
+
+    private void pollCycle() {
+        // Check for new session directories
+        File[] dirs = logsDir.toFile().listFiles(File::isDirectory);
+        if (dirs == null) return;
+
+        for (File dir : dirs) {
+            String name = dir.getName();
+            if (!matchesSessionPattern(name)) continue;
+
+            Path sessionDir = dir.toPath();
+            // Rescan if new or if turn count changed
+            SessionData existing = sessions.get(name);
+            SessionData fresh = scanSession(sessionDir);
+            if (fresh == null) continue;
+
+            int freshCount = fresh.getTurns().size();
+            int oldCount = existing != null ? existing.getTurns().size() : 0;
+
+            if (existing == null || freshCount != oldCount) {
+                Platform.runLater(() -> {
+                    sessions.put(name, fresh);
+                    sessionTurnCounts.put(name, freshCount);
+                    if (freshCount > oldCount) {
+                        for (int i = oldCount; i < freshCount; i++) {
+                            newTurnEvent.set(fresh.getTurns().get(i));
+                        }
+                    }
+                });
+
+                // Register watch on new session dir
+                if (existing == null) {
+                    try { registerWatch(sessionDir); } catch (IOException ignored) {}
+                }
+            }
+        }
     }
 
     // ---- Registration ----

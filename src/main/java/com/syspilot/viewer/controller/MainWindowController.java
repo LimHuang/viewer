@@ -259,6 +259,7 @@ public class MainWindowController extends BaseController {
     @FXML
     private void onRefreshTree() {
         if (logsWatcher == null) return;
+        logsWatcher.refreshNow();
         TreeItem<String> root = sessionTree.getRoot();
         if (root == null) return;
         refreshSessionTree(root);
